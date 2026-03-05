@@ -5,6 +5,7 @@ public class RoomObject : MonoBehaviour
     [Header("North (+X), East (+Z), South, West")]
     public bool[] directions = { false, false, false, false }; // { North, East, South, West }
     public bool isConnector; // Is a hallway between rooms
+    [SerializeField] private bool isStartingRoom;
 
     // Map positions
     [HideInInspector] public int x;
@@ -15,7 +16,7 @@ public class RoomObject : MonoBehaviour
 
     private void Awake()
     {
-        if (!isConnector)
+        if (!isConnector && !isStartingRoom)
         {
             for (int i = 0; i < Random.Range(0, 4); i++)
             {
