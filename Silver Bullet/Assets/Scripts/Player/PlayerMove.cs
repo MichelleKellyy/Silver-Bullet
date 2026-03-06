@@ -31,8 +31,10 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float headBobAmount;
     [SerializeField] float headBobSpeed;
 
-    [Header("Sounds")]
-    [SerializeField] AudioSource[] Steps;
+    //[Header("Sounds")]
+    //[SerializeField] AudioSource Step1;
+    //private float stepCoolDown = 0f;
+    //private float stepRate = 0.8f;
 
     // GENERAL
     private float speed = 100f;
@@ -44,7 +46,6 @@ public class PlayerMove : MonoBehaviour
     private RaycastHit slopeHit;
 
     private float bobAmt = 0;
-    private float stepCoolDown = 0f;
     private float playerCamOriginalPositionY;
 
 
@@ -149,7 +150,6 @@ public class PlayerMove : MonoBehaviour
         }
     }
 
-    int previousStep = -1;
     private void headBob()
     {
         if (Mathf.Abs(horizontalMove) > 0 || Mathf.Abs(verticalMove) > 0)
@@ -165,17 +165,12 @@ public class PlayerMove : MonoBehaviour
         float sinVal = Mathf.Sin(bobAmt);
         playerCam.localPosition = new Vector3(playerCam.localPosition.x, playerCamOriginalPositionY + (sinVal * headBobAmount), playerCam.localPosition.z);
 
-        stepCoolDown -= Time.deltaTime;
+        /*stepCoolDown -= Time.deltaTime;
         if ((Input.GetAxis("Horizontal") != 0f || Input.GetAxis("Vertical") != 0f) && stepCoolDown < 0f)
         {
-            int choice = Random.Range(0, Steps.Length);
-            while (choice == previousStep)
-            {
-                choice = Random.Range(0, Steps.Length);
-            }
-            previousStep = choice;
-            Steps[choice].Play();
-            stepCoolDown = Input.GetKey(runKey) ? headBobSpeed / 13 * 0.69f : headBobSpeed / 13;
-        }
+            Step1.pitch = 1f + Random.Range(-0.3f, 0.3f);
+            Step1.Play();
+            stepCoolDown = Input.GetKey(runKey) ? stepRate * 0.65f : stepRate;
+        }*/
     }
 }
