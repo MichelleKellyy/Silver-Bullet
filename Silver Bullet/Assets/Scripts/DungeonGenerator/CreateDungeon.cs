@@ -61,6 +61,15 @@ public class CreateDungeon : MonoBehaviour
     [Tooltip("The rooms do not HAVE to be the size of room size, but they cannot be larger. If they are smaller, make sure that they are positioned correctly so that they line up.")]
     [SerializeField] private int roomSize;
 
+    [Header("Enemy Settings")]
+    [Tooltip("Length of a chain from the center before enemies start spawning.")]
+    [SerializeField] private int enemySpawnDistance;
+    [Range(0, 1)]
+    [SerializeField] private float chanceOfEnemyPerRoom;
+    [SerializeField] private int numEnemiesPerRoomLow;
+    [SerializeField] private int numEnemiesPerRoomHigh;
+    [SerializeField] private GameObject enemy;
+
     [Header("Special Rooms")]
     [SerializeField] private GameObject endingRoom;
     [SerializeField] private GameObject deadEndRoom;
@@ -74,6 +83,7 @@ public class CreateDungeon : MonoBehaviour
     private bool[,] map;
     private Fringe<GameObject> toPlace;
     private GameObject roomParent;
+    private GameObject enemyParent;
 
     private int numRoomsPlaced = 0;
     private bool endingRoomPlaced = false;
@@ -121,6 +131,7 @@ public class CreateDungeon : MonoBehaviour
     private void createDungeon(bool inEditMode)
     {
         roomParent = new GameObject("Rooms");
+        enemyParent = new GameObject("Enemies");
 
         map = new bool[dungeonSize, dungeonSize];
         map[dungeonSize / 2, dungeonSize / 2] = true; // Initial room will always be at the center
@@ -257,6 +268,20 @@ public class CreateDungeon : MonoBehaviour
         }
         newRoomData.directions[(int)opposite(placingDirection)] = false;
         newRoomData.distanceFromCenter = curRoomData.distanceFromCenter + 1;
+
+        // Spawn enemies
+        int numDirections = 0;
+        foreach (bool dir in newRoomData.directions)
+        {
+            if (dir) { numDirections++; }
+        }
+        if (newRoomData.distanceFromCenter >= enemySpawnDistance && numDirections > 1 && !newRoomData.isConnector && UnityEngine.Random.Range(0f, 1f) < chanceOfEnemyPerRoom)
+        {
+            for (int i = 0; i < UnityEngine.Random.Range(numEnemiesPerRoomLow, numEnemiesPerRoomHigh); i++)
+            {
+                Instantiate(enemy, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 2.5f, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
+            }
+        }
 
         toPlace.Add(newRoom);
     }
