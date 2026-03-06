@@ -973,10 +973,10 @@ MonoBehaviour:
   - {fileID: 1004710737598685077, guid: 15bef67575db74d41a5b55e5f2950510, type: 3}
   roomSize: 20
   enemySpawnDistance: 8
-  chanceOfEnemyPerRoom: 0.5
+  chanceOfEnemyPerRoom: 1
   numEnemiesPerRoomLow: 1
   numEnemiesPerRoomHigh: 3
-  enemy: {fileID: 2885003209744152305, guid: 7a60d70f147ae16439e6fa8894b14a92, type: 3}
+  enemy: {fileID: 8668158434612242911, guid: f6992ec2d5371bf40a3967a9a77b8e2d, type: 3}
   endingRoom: {fileID: 7043214082352581844, guid: 514b6dcb1a92cb84eae8d2f651f3b4ee, type: 3}
   deadEndRoom: {fileID: 7043214082352581844, guid: 47c4191ce39a6854eb5783c43149547b, type: 3}
   connectors:
@@ -1122,7 +1122,7 @@ GameObject:
   - component: {fileID: 1999930178}
   m_Layer: 0
   m_Name: PlayerObject
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

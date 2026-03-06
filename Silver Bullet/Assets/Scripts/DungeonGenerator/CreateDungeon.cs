@@ -279,7 +279,7 @@ public class CreateDungeon : MonoBehaviour
         {
             for (int i = 0; i < UnityEngine.Random.Range(numEnemiesPerRoomLow, numEnemiesPerRoomHigh); i++)
             {
-                Instantiate(enemy, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 1, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
+                Instantiate(enemy, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 2.5f, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
             }
         }
 
