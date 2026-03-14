@@ -275,7 +275,7 @@ public class CreateDungeon : MonoBehaviour
         {
             if (dir) { numDirections++; }
         }
-        if (newRoomData.distanceFromCenter >= enemySpawnDistance && numDirections > 1 && !newRoomData.isConnector && UnityEngine.Random.Range(0f, 1f) < chanceOfEnemyPerRoom)
+        if (newRoomData.distanceFromCenter >= enemySpawnDistance && numDirections > 0 && !newRoomData.isConnector && UnityEngine.Random.Range(0f, 1f) < chanceOfEnemyPerRoom)
         {
             for (int i = 0; i < UnityEngine.Random.Range(numEnemiesPerRoomLow, numEnemiesPerRoomHigh); i++)
             {
