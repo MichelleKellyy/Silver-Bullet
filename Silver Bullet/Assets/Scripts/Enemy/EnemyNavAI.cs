@@ -1,11 +1,11 @@
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
 public class EnemyLoopAI : MonoBehaviour
 {
     private Transform player;
 
     [Header("Ranges")]
+    [SerializeField] private LayerMask hitMask;
     [SerializeField] private float aggroRange = 12f;      // starts AI if player within this
     [SerializeField] private float disengageRange = 16f;  // goes home if player farther than this
 
@@ -24,108 +24,178 @@ public class EnemyLoopAI : MonoBehaviour
     private Vector3 homePos;
     private float fixedY;
 
-    private enum State { IdleHome, Approach, Retreat, HoldBack, GoHome }
+    private enum State { IdleHome, Approach, Retreat, HoldBack, Search, GoHome }
     private State state = State.IdleHome;
 
     private float timer;
+
+    private Vector3 lastSeenPlayerPos;
+    private bool hasLastSeenPlayer = false;
 
     void Awake()
     {
         rb = GetComponent<Rigidbody>();
         homePos = transform.position;
         fixedY = transform.position.y;
-
-        rb.isKinematic = false;
-        rb.collisionDetectionMode = CollisionDetectionMode.Continuous;
-        rb.interpolation = RigidbodyInterpolation.Interpolate;
-
-        rb.constraints = RigidbodyConstraints.FreezeRotationX | RigidbodyConstraints.FreezeRotationZ;
     }
 
     void Start()
     {
-        if (player == null)
-        {
-            var p = GameObject.FindGameObjectWithTag("Player");
-            if (p != null) player = p.transform;
-            else if (Camera.main != null) player = Camera.main.transform;
-        }
+        player = GameObject.FindGameObjectWithTag("Player").transform;
     }
 
     void FixedUpdate()
     {
-        if (player == null) return;
+        Vector3 dirToPlayer = Flat(player.position) - Flat(rb.position);
+        Vector3 dirToHome = Flat(homePos) - Flat(rb.position);
 
-        Vector3 myFlat = Flat(rb.position);
-        Vector3 playerFlat = Flat(player.position);
-        Vector3 homeFlat = Flat(homePos);
+        float distToPlayer = Mathf.Infinity;
+        bool canSeePlayer = false;
 
-        float distToPlayer = Vector3.Distance(myFlat, playerFlat);
-        float distToHome = Vector3.Distance(myFlat, homeFlat);
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, dirToPlayer.normalized, out hit, dirToPlayer.magnitude, hitMask))
+        {
+            if (hit.collider.CompareTag("Player"))
+            {
+                canSeePlayer = true;
+                distToPlayer = hit.distance;
+
+                lastSeenPlayerPos = Flat(player.position);
+                hasLastSeenPlayer = true;
+            }
+        }
 
         // Global transitions: decide whether AI should be active
-        if (distToPlayer > disengageRange)
+        if (canSeePlayer && distToPlayer > disengageRange)
         {
             state = State.GoHome;
         }
-        else if (distToPlayer <= aggroRange)
+        else if (canSeePlayer && distToPlayer <= aggroRange)
         {
             // If player comes back near, re-activate even if we were home
             if (state == State.IdleHome || state == State.GoHome)
+            {
                 state = State.Approach;
+            }
         }
 
         switch (state)
         {
             case State.IdleHome:
                 StopXZ();
+
                 // If player comes close, start again
-                if (distToPlayer <= aggroRange) state = State.Approach;
+                if (canSeePlayer && distToPlayer <= aggroRange)
+                {
+                    state = State.Approach;
+                }
                 break;
 
             case State.Approach:
-                MoveDir((playerFlat - myFlat).normalized, moveSpeed);
+                if (canSeePlayer)
+                {
+                    MoveDir(dirToPlayer.normalized, moveSpeed);
 
-                // When in "attack distance", retreat
-                if (distToPlayer <= attackDistance)
-                    state = State.Retreat;
+                    // When in "attack distance", retreat
+                    if (distToPlayer <= attackDistance)
+                    {
+                        state = State.Retreat;
+                    }
+                }
+                else if (hasLastSeenPlayer)
+                {
+                    state = State.Search;
+                }
+                else
+                {
+                    state = State.GoHome;
+                }
                 break;
 
             case State.Retreat:
-                MoveDir((myFlat - playerFlat).normalized, moveSpeed);
-
-                // Once far enough, hold back for a moment
-                if (distToPlayer >= retreatToDistance)
+                if (canSeePlayer)
                 {
-                    state = State.HoldBack;
-                    timer = holdBackTime;
-                    StopXZ();
+                    MoveDir(-dirToPlayer.normalized, moveSpeed);
+
+                    // Once far enough, hold back for a moment
+                    if (distToPlayer >= retreatToDistance)
+                    {
+                        state = State.HoldBack;
+                        timer = holdBackTime;
+                        StopXZ();
+                    }
+                }
+                else if (hasLastSeenPlayer)
+                {
+                    state = State.Search;
+                }
+                else
+                {
+                    state = State.GoHome;
                 }
                 break;
 
             case State.HoldBack:
                 StopXZ();
-
                 timer -= Time.fixedDeltaTime;
 
                 // If player pushes in, retreat again immediately
-                if (distToPlayer <= attackDistance)
+                if (canSeePlayer && distToPlayer <= attackDistance)
                 {
                     state = State.Retreat;
                     break;
                 }
 
+                if (!canSeePlayer && hasLastSeenPlayer)
+                {
+                    state = State.Search;
+                    break;
+                }
+
                 // After waiting, approach again
                 if (timer <= 0f)
+                {
+                    if (canSeePlayer)
+                    {
+                        state = State.Approach;
+                    }
+                    else if (hasLastSeenPlayer)
+                    {
+                        state = State.Search;
+                    }
+                    else
+                    {
+                        state = State.GoHome;
+                    }
+                }
+                break;
+
+            case State.Search:
+                Vector3 dirToLastSeen = Flat(lastSeenPlayerPos) - Flat(rb.position);
+
+                if (canSeePlayer)
+                {
                     state = State.Approach;
+                    break;
+                }
+
+                if (dirToLastSeen.sqrMagnitude > 0.05f)
+                {
+                    MoveDir(dirToLastSeen.normalized, moveSpeed);
+                }
+                else
+                {
+                    hasLastSeenPlayer = false;
+                    state = State.GoHome;
+                    StopXZ();
+                }
                 break;
 
             case State.GoHome:
                 // Go back to start position
-                Vector3 toHome = (homeFlat - myFlat);
-                if (toHome.sqrMagnitude > 0.05f)
+                if (dirToHome.sqrMagnitude > 0.05f)
                 {
-                    MoveDir(toHome.normalized, moveSpeed);
+                    MoveDir(dirToHome.normalized, moveSpeed);
                 }
                 else
                 {
@@ -137,9 +207,8 @@ public class EnemyLoopAI : MonoBehaviour
         }
     }
 
-    void MoveDir(Vector3 dirFlat, float spd)
+    void MoveDir(Vector3 dir, float spd)
     {
-        Vector3 dir = new Vector3(dirFlat.x, 0f, dirFlat.z);
         Vector3 next = rb.position + dir * spd * Time.fixedDeltaTime;
         next.y = fixedY;
 
@@ -148,10 +217,7 @@ public class EnemyLoopAI : MonoBehaviour
 
     void StopXZ()
     {
-        Vector3 v = rb.linearVelocity;
-        v.x = 0f;
-        v.z = 0f;
-        rb.linearVelocity = v;
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
     }
 
     static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
