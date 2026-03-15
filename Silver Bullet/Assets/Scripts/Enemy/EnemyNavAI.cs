@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class EnemyLoopAI : MonoBehaviour
+public class EnemyNavAI : MonoBehaviour
 {
     private Transform player;
 

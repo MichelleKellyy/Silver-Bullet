@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: -4536955473258968553}
   - component: {fileID: 1121451346946024171}
   - component: {fileID: 2391908313795133427}
+  - component: {fileID: -5756944042869002248}
   m_Layer: 7
   m_Name: Skeleton
   m_TagString: Enemy
@@ -176,3 +177,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a247e47cb423f2d4a945e9d5fe14d94d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SpriteFacePlayer
+--- !u!114 &-5756944042869002248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8668158434612242911}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0ba9c05b990b32240b5eb43d401868d2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EnemyStats
+  armoured: {fileID: 2100000, guid: 9c69d7e6210679048962cc24e75b230b, type: 2}
+  notArmoured: {fileID: 2100000, guid: a910dd367a5f42945bbdcf31a1f3ddb6, type: 2}
