@@ -7,6 +7,7 @@ public class EnemyNavAI : MonoBehaviour
     [Header("Ranges")]
     [SerializeField] private LayerMask hitMask;
     [SerializeField] private float aggroRange = 12f;      // starts AI if player within this
+    [SerializeField] private float sprintRange = 15f;
     [SerializeField] private float disengageRange = 16f;  // goes home if player farther than this
 
     [Header("Combat spacing")]
@@ -94,12 +95,20 @@ public class EnemyNavAI : MonoBehaviour
             case State.Approach:
                 if (canSeePlayer)
                 {
-                    MoveDir(dirToPlayer.normalized, moveSpeed);
+                    if (distToPlayer > sprintRange)
+                    {
+                        MoveDir(dirToPlayer.normalized, moveSpeed * 2);
+                    }
+                    else
+                    {
+                        MoveDir(dirToPlayer.normalized, moveSpeed);
+                    }
 
-                    // When in "attack distance", retreat
+                    // When in "attack distance", attack then retreat
                     if (distToPlayer <= attackDistance)
                     {
                         state = State.Retreat;
+                        player.gameObject.GetComponentInParent<PlayerStats>().attack(1);
                     }
                 }
                 else if (hasLastSeenPlayer)
