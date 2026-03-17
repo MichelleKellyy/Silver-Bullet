@@ -5,7 +5,15 @@ public class GunMech : MonoBehaviour
     public Transform cam;
     public Transform recallPoint;
     public GameObject bulletPrefab;
+
     public LayerMask hitMask;
+
+    public AudioSource shoot;
+    public AudioSource reload;
+
+    public Animator reloadAnim;
+    private float initReloadCooldown = 2.4f;
+    private float reloadCooldown;
 
     private Bullet currentBullet;
 
@@ -13,6 +21,11 @@ public class GunMech : MonoBehaviour
     {
         if (Input.GetMouseButtonDown(0))
             Shoot();
+
+        if (reloadCooldown > 0)
+        {
+            reloadCooldown -= Time.deltaTime;
+        }
     }
 
     void Shoot()
@@ -20,7 +33,7 @@ public class GunMech : MonoBehaviour
         if (currentBullet != null) return;
 
         RaycastHit hit;
-        if (Physics.Raycast(cam.position, cam.forward, out hit, Mathf.Infinity, hitMask))
+        if (Physics.Raycast(cam.position, cam.forward, out hit, Mathf.Infinity, hitMask) && reloadCooldown <= 0)
         {
             if (hit.collider.CompareTag("Enemy"))
             {
@@ -32,13 +45,19 @@ public class GunMech : MonoBehaviour
 
             currentBullet = bulletObj.GetComponent<Bullet>();
             currentBullet.Init(this, recallPoint);
-        }
 
+            shoot.Play();
+        }
     }
 
     public void ClearBulletLock(Bullet bullet)
     {
         if (currentBullet == bullet)
+        {
+            reloadAnim.SetTrigger("Reload");
+            reload.Play();
+            reloadCooldown = initReloadCooldown;
             currentBullet = null;
+        }
     }
 }

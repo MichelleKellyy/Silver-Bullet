@@ -11,6 +11,13 @@ public struct DecayValues
     public int decayAt;
 }
 
+[Serializable]
+public struct ColouredMats
+{
+    public Material nonWall;
+    public Material wall;
+}
+
 public enum PlacementOrder
 {
     Stack, 
@@ -60,6 +67,10 @@ public class CreateDungeon : MonoBehaviour
     [SerializeField] private GameObject[] rooms;
     [Tooltip("The rooms do not HAVE to be the size of room size, but they cannot be larger. If they are smaller, make sure that they are positioned correctly so that they line up.")]
     [SerializeField] private int roomSize;
+    [Tooltip("Tiers of materials (rooms further distance from the beginning uses higher tiered materials)")]
+    [SerializeField] private int[] tieredMatValues;
+    [SerializeField] private ColouredMats[] tieredMaterials;
+
 
     [Header("Enemy Settings")]
     [Tooltip("Length of a chain from the center before enemies start spawning.")]
@@ -172,12 +183,15 @@ public class CreateDungeon : MonoBehaviour
         if (inEditMode)
         {
             DestroyImmediate(roomParent);
+            DestroyImmediate(enemyParent);
         }
         else
         {
             Destroy(roomParent);
+            Destroy(enemyParent);
         }
         roomParent = new GameObject("Rooms");
+        enemyParent = new GameObject("Enemies");
         map = new bool[dungeonSize, dungeonSize];
         map[dungeonSize / 2, dungeonSize / 2] = true;
         numRoomsPlaced = 0;
@@ -268,6 +282,26 @@ public class CreateDungeon : MonoBehaviour
         }
         newRoomData.directions[(int)opposite(placingDirection)] = false;
         newRoomData.distanceFromCenter = curRoomData.distanceFromCenter + 1;
+
+        // Colour the rooms
+        foreach (MeshRenderer obj in newRoom.GetComponentsInChildren<MeshRenderer>())
+        {
+            for (int tier = tieredMatValues.Length - 1; tier >= 0; tier--)
+            {
+                if (newRoomData.distanceFromCenter >= tieredMatValues[tier])
+                {
+                    if (obj.CompareTag("NonWall"))
+                    {
+                        obj.material = tieredMaterials[tier].nonWall;
+                    }
+                    else
+                    {
+                        obj.material = tieredMaterials[tier].wall;
+                    }
+                    break;
+                }
+            }
+        }
 
         // Spawn enemies
         int numDirections = 0;

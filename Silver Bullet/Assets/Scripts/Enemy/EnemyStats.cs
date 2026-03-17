@@ -17,7 +17,7 @@ public class EnemyStats : MonoBehaviour
         if (isArmoured)
         {
             isArmoured = false;
-            GetComponent<MeshRenderer>().material = notArmoured;
+            GetComponentInChildren<MeshRenderer>().material = notArmoured;
         }
         else
         {

@@ -19,7 +19,6 @@ public class EnemyNavAI : MonoBehaviour
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 4f;
-    [SerializeField] private float turnSpeed = 10f;
 
     private Rigidbody rb;
     private Vector3 homePos;
