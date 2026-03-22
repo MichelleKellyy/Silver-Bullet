@@ -7,6 +7,9 @@ public class EnemyStats : MonoBehaviour
 
     private bool isArmoured = true;
 
+    public AudioSource armourHit;
+    public AudioSource unarmouredHit;
+
     public bool getArmoured()
     {
         return isArmoured;
@@ -18,10 +21,16 @@ public class EnemyStats : MonoBehaviour
         {
             isArmoured = false;
             GetComponentInChildren<MeshRenderer>().material = notArmoured;
+            armourHit.Play();
+            Debug.Log("armour hit");
+;
         }
         else
         {
+            unarmouredHit.Play();
             Destroy(gameObject);
+            Debug.Log("enemy killed");
+
         }
     }
 }
