@@ -14,12 +14,6 @@ public class CameraRotation : MonoBehaviour
 
     private float multiplier = 0.01f;
 
-    private void Awake()
-    {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
     private void Update()
     {
         getInput();

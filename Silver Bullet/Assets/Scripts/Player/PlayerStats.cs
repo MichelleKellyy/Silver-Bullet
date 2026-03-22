@@ -19,6 +19,7 @@ public class PlayerStats : MonoBehaviour
         if (playerHealth <= 0)
         {
             print("Die");
+            FindObjectOfType<UIManager>().ShowGameOver();
         }
     }
 }
