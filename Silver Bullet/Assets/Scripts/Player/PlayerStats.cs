@@ -23,7 +23,6 @@ public class PlayerStats : MonoBehaviour
         damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
         if (playerHealth <= 0)
         {
-            print("Die");
             FindObjectOfType<UIManager>().ShowGameOver();
         }
     }

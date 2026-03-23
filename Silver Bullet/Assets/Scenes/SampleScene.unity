@@ -1700,6 +1700,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eb5ac44e14ee4ba498bc3ed8fc9791a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GloveMech
+  skeletonArmour: {fileID: 302124788606514748, guid: bb59253e81739944eb40e4f18d669bf3, type: 3}
   cam: {fileID: 1845567125}
   hitMask:
     serializedVersion: 2
@@ -2603,7 +2604,7 @@ MonoBehaviour:
   enemy: {fileID: 8668158434612242911, guid: f6992ec2d5371bf40a3967a9a77b8e2d, type: 3}
   endingRoom: {fileID: 7043214082352581844, guid: 514b6dcb1a92cb84eae8d2f651f3b4ee, type: 3}
   deadEndRoom: {fileID: 7043214082352581844, guid: 47c4191ce39a6854eb5783c43149547b, type: 3}
-  key: {fileID: 12601365435904956, guid: 1a2ab19836f9f6b4e85a299cd1467223, type: 3}
+  key: {fileID: 6171391541073797853, guid: 1a2ab19836f9f6b4e85a299cd1467223, type: 3}
   keyDistances:
   - 0.25
   - 0.5
@@ -5067,6 +5068,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directions: 00010000
   isConnector: 0
+  isDeadEnd: 0
   isStartingRoom: 1
   x: 15
   z: 15

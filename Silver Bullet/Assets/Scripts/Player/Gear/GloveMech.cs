@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GloveMech : MonoBehaviour
 {
+    public GameObject skeletonArmour;
     public Transform cam;
     public LayerMask hitMask;
     public LayerMask hitMaskSpecific;
@@ -36,6 +37,8 @@ public class GloveMech : MonoBehaviour
                 EnemyStats stats = hit.collider.GetComponent<EnemyStats>();
                 if (stats.getArmoured())
                 {
+                    GameObject armour = Instantiate(skeletonArmour, hit.transform.position, Quaternion.LookRotation(cam.transform.position - hit.transform.position));
+                    armour.GetComponent<Rigidbody>().AddForce(transform.forward * -15, ForceMode.Impulse);
                     stats.hit();
                 }
                 else
