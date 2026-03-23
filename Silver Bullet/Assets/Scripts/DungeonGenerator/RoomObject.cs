@@ -5,6 +5,7 @@ public class RoomObject : MonoBehaviour
     [Header("North (+X), East (+Z), South, West")]
     public bool[] directions = { false, false, false, false }; // { North, East, South, West }
     public bool isConnector; // Is a hallway between rooms
+    public bool isDeadEnd;
     [SerializeField] private bool isStartingRoom;
 
     // Map positions

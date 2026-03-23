@@ -374,9 +374,15 @@ public class CreateDungeon : MonoBehaviour
         RoomObject secondKeyLoc = chooseFurthestFrom(secondArea, new List<RoomObject> { firstKeyLoc });
         RoomObject thirdKeyLoc = chooseFurthestFrom(thirdArea, new List<RoomObject> { firstKeyLoc, secondKeyLoc });
 
-        Instantiate(key, firstKeyLoc.transform.position, Quaternion.identity, keyParent.transform);
-        Instantiate(key, secondKeyLoc.transform.position, Quaternion.identity, keyParent.transform);
-        Instantiate(key, thirdKeyLoc.transform.position, Quaternion.identity, keyParent.transform);
+        Instantiate(key, !firstKeyLoc.isDeadEnd 
+                    ? new Vector3(firstKeyLoc.transform.position.x, firstKeyLoc.transform.position.y + 3, firstKeyLoc.transform.position.z) 
+                    : new Vector3(firstKeyLoc.transform.position.x, firstKeyLoc.transform.position.y + 3, firstKeyLoc.transform.position.z) + firstKeyLoc.transform.right.normalized * 5, Quaternion.identity, keyParent.transform);
+        Instantiate(key, !secondKeyLoc.isDeadEnd 
+                    ? new Vector3(secondKeyLoc.transform.position.x, secondKeyLoc.transform.position.y + 3, secondKeyLoc.transform.position.z)
+                    : new Vector3(secondKeyLoc.transform.position.x, secondKeyLoc.transform.position.y + 3, secondKeyLoc.transform.position.z) + secondKeyLoc.transform.right.normalized * 5, Quaternion.identity, keyParent.transform);
+        Instantiate(key, !thirdKeyLoc.isDeadEnd 
+                    ? new Vector3(thirdKeyLoc.transform.position.x, thirdKeyLoc.transform.position.y + 3, thirdKeyLoc.transform.position.z)
+                    : new Vector3(thirdKeyLoc.transform.position.x, thirdKeyLoc.transform.position.y + 3, thirdKeyLoc.transform.position.z) + thirdKeyLoc.transform.right.normalized * 5, Quaternion.identity, keyParent.transform);
     }
 
     private RoomObject chooseFurthestFrom(List<RoomObject> rooms, List<RoomObject> chosen)
