@@ -4,21 +4,33 @@ public class EnemyNavAI : MonoBehaviour
 {
     private Transform player;
 
+    [SerializeField] private bool isArcher;
+
     [Header("Ranges")]
     [SerializeField] private LayerMask hitMask;
-    [SerializeField] private float aggroRange = 12f;      // starts AI if player within this
+    [SerializeField] private float aggroRange = 12f;
     [SerializeField] private float sprintRange = 15f;
-    [SerializeField] private float disengageRange = 16f;  // goes home if player farther than this
+    [SerializeField] private float disengageRange = 16f;
 
-    [Header("Combat spacing")]
-    [SerializeField] private float attackDistance = 2.5f; // when it reaches this, it retreats
-    [SerializeField] private float retreatToDistance = 4.5f; // retreats until at least this far
+    [Header("Melee spacing")]
+    [SerializeField] private float attackDistance = 2.5f;
+    [SerializeField] private float retreatToDistance = 4.5f;
 
-    [Header("Timing")]
-    [SerializeField] private float holdBackTime = 1.2f;   // wait after retreat before re-approach
+    [Header("Melee timing")]
+    [SerializeField] private float holdBackTime = 1.2f;
 
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 4f;
+
+    [Header("Archer AI")]
+    [SerializeField] private Transform shootPoint;
+    [SerializeField] private GameObject arrowPrefab;
+    [SerializeField] private float archerMinDistance = 5f;      // too close -> back away
+    [SerializeField] private float archerMaxDistance = 9f;      // too far -> move closer
+    [SerializeField] private float shootCooldown = 1.5f;
+    [SerializeField] private float arrowSpeed = 18f;
+    [SerializeField] private float arrowLifeTime = 5f;
+    [SerializeField] private int arrowDamage = 1;
 
     private Rigidbody rb;
     private Vector3 homePos;
@@ -28,6 +40,7 @@ public class EnemyNavAI : MonoBehaviour
     private State state = State.IdleHome;
 
     private float timer;
+    private float shootTimer;
 
     private Vector3 lastSeenPlayerPos;
     private bool hasLastSeenPlayer = false;
@@ -41,38 +54,47 @@ public class EnemyNavAI : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player").transform;
+        GameObject p = GameObject.FindGameObjectWithTag("Player");
+        if (p != null)
+            player = p.transform;
     }
 
     void FixedUpdate()
     {
+        if (player == null) return;
+
+        if (shootTimer > 0f)
+            shootTimer -= Time.fixedDeltaTime;
+
         Vector3 dirToPlayer = Flat(player.position) - Flat(rb.position);
         Vector3 dirToHome = Flat(homePos) - Flat(rb.position);
 
         float distToPlayer = Mathf.Infinity;
         bool canSeePlayer = false;
 
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, dirToPlayer.normalized, out hit, dirToPlayer.magnitude, hitMask))
+        if (dirToPlayer.sqrMagnitude > 0.001f)
         {
-            if (hit.collider.CompareTag("Player"))
+            RaycastHit hit;
+            if (Physics.Raycast(transform.position, dirToPlayer.normalized, out hit, dirToPlayer.magnitude, hitMask))
             {
-                canSeePlayer = true;
-                distToPlayer = hit.distance;
+                if (hit.collider.CompareTag("Player"))
+                {
+                    canSeePlayer = true;
+                    distToPlayer = hit.distance;
 
-                lastSeenPlayerPos = Flat(player.position);
-                hasLastSeenPlayer = true;
+                    lastSeenPlayerPos = Flat(player.position);
+                    hasLastSeenPlayer = true;
+                }
             }
         }
 
-        // Global transitions: decide whether AI should be active
+        // Global transitions
         if (canSeePlayer && distToPlayer > disengageRange)
         {
             state = State.GoHome;
         }
         else if (canSeePlayer && distToPlayer <= aggroRange)
         {
-            // If player comes back near, re-activate even if we were home
             if (state == State.IdleHome || state == State.GoHome)
             {
                 state = State.Approach;
@@ -84,7 +106,6 @@ public class EnemyNavAI : MonoBehaviour
             case State.IdleHome:
                 StopXZ();
 
-                // If player comes close, start again
                 if (canSeePlayer && distToPlayer <= aggroRange)
                 {
                     state = State.Approach;
@@ -92,122 +113,50 @@ public class EnemyNavAI : MonoBehaviour
                 break;
 
             case State.Approach:
-                if (canSeePlayer)
+                if (isArcher)
                 {
-                    if (distToPlayer > sprintRange)
-                    {
-                        MoveDir(dirToPlayer.normalized, moveSpeed * 2);
-                    }
-                    else
-                    {
-                        MoveDir(dirToPlayer.normalized, moveSpeed);
-                    }
-
-                    // When in "attack distance", attack then retreat
-                    if (distToPlayer <= attackDistance)
-                    {
-                        state = State.Retreat;
-                        player.gameObject.GetComponentInParent<PlayerStats>().attack(1);
-                    }
-                }
-                else if (hasLastSeenPlayer)
-                {
-                    state = State.Search;
+                    HandleArcherApproach(canSeePlayer, distToPlayer, dirToPlayer);
                 }
                 else
                 {
-                    state = State.GoHome;
+                    HandleMeleeApproach(canSeePlayer, distToPlayer, dirToPlayer);
                 }
                 break;
 
             case State.Retreat:
-                if (canSeePlayer)
+                if (isArcher)
                 {
-                    MoveDir(-dirToPlayer.normalized, moveSpeed);
-
-                    // Once far enough, hold back for a moment
-                    if (distToPlayer >= retreatToDistance)
-                    {
-                        state = State.HoldBack;
-                        timer = holdBackTime;
-                        StopXZ();
-                    }
-                }
-                else if (hasLastSeenPlayer)
-                {
-                    state = State.Search;
+                    HandleArcherRetreat(canSeePlayer, distToPlayer, dirToPlayer);
                 }
                 else
                 {
-                    state = State.GoHome;
+                    HandleMeleeRetreat(canSeePlayer, distToPlayer, dirToPlayer);
                 }
                 break;
 
             case State.HoldBack:
-                StopXZ();
-                timer -= Time.fixedDeltaTime;
-
-                // If player pushes in, retreat again immediately
-                if (canSeePlayer && distToPlayer <= attackDistance)
+                if (isArcher)
                 {
-                    state = State.Retreat;
-                    break;
+                    // Archers use HoldBack as "stand and shoot"
+                    HandleArcherHold(canSeePlayer, distToPlayer, dirToPlayer);
                 }
-
-                if (!canSeePlayer && hasLastSeenPlayer)
+                else
                 {
-                    state = State.Search;
-                    break;
-                }
-
-                // After waiting, approach again
-                if (timer <= 0f)
-                {
-                    if (canSeePlayer)
-                    {
-                        state = State.Approach;
-                    }
-                    else if (hasLastSeenPlayer)
-                    {
-                        state = State.Search;
-                    }
-                    else
-                    {
-                        state = State.GoHome;
-                    }
+                    HandleMeleeHold(canSeePlayer, distToPlayer);
                 }
                 break;
 
             case State.Search:
-                Vector3 dirToLastSeen = Flat(lastSeenPlayerPos) - Flat(rb.position);
-
-                if (canSeePlayer)
-                {
-                    state = State.Approach;
-                    break;
-                }
-
-                if (dirToLastSeen.sqrMagnitude > 0.05f)
-                {
-                    MoveDir(dirToLastSeen.normalized, moveSpeed);
-                }
-                else
-                {
-                    hasLastSeenPlayer = false;
-                    state = State.GoHome;
-                    StopXZ();
-                }
+                HandleSearch(canSeePlayer);
                 break;
 
             case State.GoHome:
-                // Go back to start position
                 if (dirToHome.sqrMagnitude > 0.05f)
                 {
                     MoveDir(dirToHome.normalized, moveSpeed);
                 }
                 else
                 {
-                    // At home: wait, but if player comes near, restart
                     state = State.IdleHome;
                     StopXZ();
                 }
@@ -215,8 +164,229 @@ public class EnemyNavAI : MonoBehaviour
         }
     }
 
+    void HandleMeleeApproach(bool canSeePlayer, float distToPlayer, Vector3 dirToPlayer)
+    {
+        if (canSeePlayer)
+        {
+            if (distToPlayer > sprintRange)
+                MoveDir(dirToPlayer.normalized, moveSpeed * 2f);
+            else
+                MoveDir(dirToPlayer.normalized, moveSpeed);
+
+            if (distToPlayer <= attackDistance)
+            {
+                state = State.Retreat;
+
+                PlayerStats stats = player.GetComponentInParent<PlayerStats>();
+                if (stats != null)
+                    stats.attack(1);
+            }
+        }
+        else if (hasLastSeenPlayer)
+        {
+            state = State.Search;
+        }
+        else
+        {
+            state = State.GoHome;
+        }
+    }
+
+    void HandleMeleeRetreat(bool canSeePlayer, float distToPlayer, Vector3 dirToPlayer)
+    {
+        if (canSeePlayer)
+        {
+            MoveDir(-dirToPlayer.normalized, moveSpeed);
+
+            if (distToPlayer >= retreatToDistance)
+            {
+                state = State.HoldBack;
+                timer = holdBackTime;
+                StopXZ();
+            }
+        }
+        else if (hasLastSeenPlayer)
+        {
+            state = State.Search;
+        }
+        else
+        {
+            state = State.GoHome;
+        }
+    }
+
+    void HandleMeleeHold(bool canSeePlayer, float distToPlayer)
+    {
+        StopXZ();
+        timer -= Time.fixedDeltaTime;
+
+        if (canSeePlayer && distToPlayer <= attackDistance)
+        {
+            state = State.Retreat;
+            breakStateSafe();
+            return;
+        }
+
+        if (!canSeePlayer && hasLastSeenPlayer)
+        {
+            state = State.Search;
+            breakStateSafe();
+            return;
+        }
+
+        if (timer <= 0f)
+        {
+            if (canSeePlayer)
+                state = State.Approach;
+            else if (hasLastSeenPlayer)
+                state = State.Search;
+            else
+                state = State.GoHome;
+        }
+    }
+
+    void HandleArcherApproach(bool canSeePlayer, float distToPlayer, Vector3 dirToPlayer)
+    {
+        if (canSeePlayer)
+        {
+            // Too far: move closer
+            if (distToPlayer > archerMaxDistance)
+            {
+                MoveDir(dirToPlayer.normalized, moveSpeed);
+            }
+            // Too close: back away
+            else if (distToPlayer < archerMinDistance)
+            {
+                state = State.Retreat;
+            }
+            // Good range: stop and shoot
+            else
+            {
+                state = State.HoldBack;
+                StopXZ();
+            }
+        }
+        else if (hasLastSeenPlayer)
+        {
+            state = State.Search;
+        }
+        else
+        {
+            state = State.GoHome;
+        }
+    }
+
+    void HandleArcherRetreat(bool canSeePlayer, float distToPlayer, Vector3 dirToPlayer)
+    {
+        if (canSeePlayer)
+        {
+            MoveDir(-dirToPlayer.normalized, moveSpeed);
+
+            if (distToPlayer >= archerMinDistance + 0.75f)
+            {
+                state = State.HoldBack;
+                StopXZ();
+            }
+        }
+        else if (hasLastSeenPlayer)
+        {
+            state = State.Search;
+        }
+        else
+        {
+            state = State.GoHome;
+        }
+    }
+
+    void HandleArcherHold(bool canSeePlayer, float distToPlayer, Vector3 dirToPlayer)
+    {
+        if (!canSeePlayer)
+        {
+            if (hasLastSeenPlayer)
+                state = State.Search;
+            else
+                state = State.GoHome;
+
+            return;
+        }
+
+        // Reposition if needed
+        if (distToPlayer < archerMinDistance)
+        {
+            state = State.Retreat;
+            return;
+        }
+
+        if (distToPlayer > archerMaxDistance)
+        {
+            state = State.Approach;
+            return;
+        }
+
+        StopXZ();
+
+        if (shootTimer <= 0f)
+        {
+            ShootArrow();
+            shootTimer = shootCooldown;
+        }
+    }
+
+    void HandleSearch(bool canSeePlayer)
+    {
+        Vector3 dirToLastSeen = Flat(lastSeenPlayerPos) - Flat(rb.position);
+
+        if (canSeePlayer)
+        {
+            state = State.Approach;
+            return;
+        }
+
+        if (dirToLastSeen.sqrMagnitude > 0.05f)
+        {
+            MoveDir(dirToLastSeen.normalized, moveSpeed);
+        }
+        else
+        {
+            hasLastSeenPlayer = false;
+            state = State.GoHome;
+            StopXZ();
+        }
+    }
+
+    void ShootArrow()
+    {
+        if (arrowPrefab == null || shootPoint == null || player == null)
+            return;
+
+        Vector3 aimPoint = player.position + Vector3.up * 1.0f;
+        Vector3 dir = (aimPoint - shootPoint.position).normalized;
+
+        GameObject arrowObj = Instantiate(
+            arrowPrefab,
+            shootPoint.position,
+            Quaternion.LookRotation(dir)
+        );
+
+        Rigidbody arrowRb = arrowObj.GetComponent<Rigidbody>();
+        if (arrowRb != null)
+        {
+            arrowRb.linearVelocity = dir * arrowSpeed;
+        }
+
+        EnemyArrow arrow = arrowObj.GetComponent<EnemyArrow>();
+        if (arrow != null)
+        {
+            arrow.SetDamage(arrowDamage);
+        }
+
+        Destroy(arrowObj, arrowLifeTime);
+    }
+
     void MoveDir(Vector3 dir, float spd)
     {
+        if (dir.sqrMagnitude <= 0.001f) return;
+
         Vector3 next = rb.position + dir * spd * Time.fixedDeltaTime;
         next.y = fixedY;
 
@@ -229,4 +399,7 @@ public class EnemyNavAI : MonoBehaviour
     }
 
     static Vector3 Flat(Vector3 v) => new Vector3(v.x, 0f, v.z);
+
+    // Just avoids using "break" outside a switch case block
+    void breakStateSafe() { }
 }

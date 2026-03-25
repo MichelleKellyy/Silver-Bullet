@@ -78,7 +78,8 @@ public class CreateDungeon : MonoBehaviour
     [SerializeField] private float chanceOfEnemyPerRoom;
     [SerializeField] private int numEnemiesPerRoomLow;
     [SerializeField] private int numEnemiesPerRoomHigh;
-    [SerializeField] private GameObject enemy;
+    [SerializeField] private GameObject skeleton;
+    [SerializeField] private GameObject skeletonArcher;
 
     [Header("Special Rooms")]
     [SerializeField] private GameObject endingRoom;
@@ -327,7 +328,14 @@ public class CreateDungeon : MonoBehaviour
         {
             for (int i = 0; i < UnityEngine.Random.Range(numEnemiesPerRoomLow, numEnemiesPerRoomHigh); i++)
             {
-                Instantiate(enemy, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 2.5f, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
+                if (UnityEngine.Random.Range(0f, 1f) < 0.6f)
+                {
+                    Instantiate(skeleton, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 2.5f, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
+                }           
+                else
+                {
+                    Instantiate(skeletonArcher, new Vector3(UnityEngine.Random.Range(newRoom.transform.position.x - roomSize / 2, newRoom.transform.position.x + roomSize / 2), 2.5f, UnityEngine.Random.Range(newRoom.transform.position.z - roomSize / 2, newRoom.transform.position.z + roomSize / 2)), Quaternion.identity, enemyParent.transform);
+                }
             }
         }
 

@@ -2,8 +2,12 @@ using UnityEngine;
 
 public class EnemyStats : MonoBehaviour
 {
+    public bool isArcher;
+
     [SerializeField] private Material armoured;
+    [SerializeField] private Material armouredArcher;
     [SerializeField] private Material notArmoured;
+    [SerializeField] private Material notArmouredArcher;
 
     [SerializeField] private AudioSource audioSource;
     [SerializeField] private AudioClip armourHitClip;
@@ -21,7 +25,14 @@ public class EnemyStats : MonoBehaviour
         if (isArmoured)
         {
             isArmoured = false;
-            GetComponentInChildren<MeshRenderer>().material = notArmoured;
+            if (isArcher)
+            {
+                GetComponentInChildren<MeshRenderer>().material = notArmouredArcher;
+            }
+            else
+            {
+                GetComponentInChildren<MeshRenderer>().material = notArmoured;
+            }
 
             if (audioSource != null && armourHitClip != null)
                 audioSource.PlayOneShot(armourHitClip);
