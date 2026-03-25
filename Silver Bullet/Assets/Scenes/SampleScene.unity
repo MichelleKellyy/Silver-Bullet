@@ -1701,6 +1701,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GloveMech
   skeletonArmour: {fileID: 302124788606514748, guid: bb59253e81739944eb40e4f18d669bf3, type: 3}
+  skeletonArcherArmour: {fileID: 899232923507630992, guid: f81116e2eb182794cbd60914f900f2ca, type: 3}
   cam: {fileID: 1845567125}
   hitMask:
     serializedVersion: 2
@@ -1852,10 +1853,10 @@ RectTransform:
   - {fileID: 1904035599}
   m_Father: {fileID: 1633127733}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: -1820, y: -980}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!1 &832575517
 GameObject:
@@ -2601,7 +2602,8 @@ MonoBehaviour:
   chanceOfEnemyPerRoom: 1
   numEnemiesPerRoomLow: 1
   numEnemiesPerRoomHigh: 3
-  enemy: {fileID: 8668158434612242911, guid: f6992ec2d5371bf40a3967a9a77b8e2d, type: 3}
+  skeleton: {fileID: 8668158434612242911, guid: f6992ec2d5371bf40a3967a9a77b8e2d, type: 3}
+  skeletonArcher: {fileID: 2992601803503804640, guid: 4e5b38a1f72d9d54ca934d103e74910c, type: 3}
   endingRoom: {fileID: 7043214082352581844, guid: 514b6dcb1a92cb84eae8d2f651f3b4ee, type: 3}
   deadEndRoom: {fileID: 7043214082352581844, guid: 47c4191ce39a6854eb5783c43149547b, type: 3}
   key: {fileID: 6171391541073797853, guid: 1a2ab19836f9f6b4e85a299cd1467223, type: 3}
@@ -3482,10 +3484,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cd44c1031e13a943bb63640046fad76, type: 3}
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.CanvasScaler
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
-  m_ReferenceResolution: {x: 800, y: 600}
+  m_ReferenceResolution: {x: 1920, y: 1080}
   m_ScreenMatchMode: 0
   m_MatchWidthOrHeight: 0
   m_PhysicalUnit: 3
@@ -4064,6 +4066,7 @@ MonoBehaviour:
   walkSpeed: 70
   runSpeed: 120
   acceleration: 10
+  dashDist: 25
   groundDistance: 0.4
   groundCheck: {fileID: 1377191312}
   groundMask:

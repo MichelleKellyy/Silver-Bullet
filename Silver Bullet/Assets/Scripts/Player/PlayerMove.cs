@@ -13,6 +13,7 @@ public class PlayerMove : MonoBehaviour
     [SerializeField] float walkSpeed = 4f;
     [SerializeField] float runSpeed = 8f;
     [SerializeField] float acceleration = 10f;
+    [SerializeField] float dashDist = 2f;
 
     [Header("Jump Variables")]
     [SerializeField] float groundDistance = 0.4f;
@@ -47,6 +48,9 @@ public class PlayerMove : MonoBehaviour
     private float stepCoolDown = 0f;
     private float playerCamOriginalPositionY;
 
+    private bool isDash = false;
+    private float dashCooldown = 0;
+
 
     private void Awake()
     {
@@ -66,6 +70,11 @@ public class PlayerMove : MonoBehaviour
         {
             rb.useGravity = true;
         }
+
+        if (dashCooldown > 0)
+        {
+            dashCooldown -= Time.deltaTime;
+        }
     }
     private void LateUpdate()
     {
@@ -74,6 +83,7 @@ public class PlayerMove : MonoBehaviour
     private void FixedUpdate()
     {
         movePlayer();
+        dash();
     }
 
     private bool onSlope()
@@ -104,6 +114,11 @@ public class PlayerMove : MonoBehaviour
     {
         horizontalMove = Input.GetAxisRaw("Horizontal");
         verticalMove = Input.GetAxisRaw("Vertical");
+
+        if (Input.GetKeyDown(KeyCode.Space) && dashCooldown <= 0)
+        {
+            isDash = true;
+        }
 
         movement = (orientation.forward * verticalMove + orientation.right * horizontalMove).normalized;
         slopeMoveDirection = Vector3.ProjectOnPlane(movement, slopeHit.normal);
@@ -176,6 +191,16 @@ public class PlayerMove : MonoBehaviour
             previousStep = choice;
             Steps[choice].Play();
             stepCoolDown = Input.GetKey(runKey) ? headBobSpeed / 13 * 0.69f : headBobSpeed / 13;
+        }
+    }
+
+    private void dash()
+    {
+        if (isDash && dashCooldown <= 0)
+        {
+            rb.AddForce(orientation.right * horizontalMove * dashDist, ForceMode.Impulse);
+            dashCooldown = 1f;
+            isDash = false;
         }
     }
 }
