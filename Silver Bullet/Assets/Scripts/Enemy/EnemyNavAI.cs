@@ -5,6 +5,7 @@ public class EnemyNavAI : MonoBehaviour
     private Transform player;
 
     [SerializeField] private bool isArcher;
+    [SerializeField] private AudioSource noise;
 
     [Header("Ranges")]
     [SerializeField] private LayerMask hitMask;
@@ -79,6 +80,10 @@ public class EnemyNavAI : MonoBehaviour
             {
                 if (hit.collider.CompareTag("Player"))
                 {
+                    if (Random.Range(0f, 1f) > 0.8f)
+                    {
+                        noise.Play();
+                    }
                     canSeePlayer = true;
                     distToPlayer = hit.distance;
 

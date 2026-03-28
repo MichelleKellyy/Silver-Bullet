@@ -7,8 +7,11 @@ public class GloveMech : MonoBehaviour
     public Transform cam;
     public LayerMask hitMask;
     public LayerMask hitMaskSpecific;
+    public Animator gloveAnim;
+    public ParticleSystem electricity;
+    public AudioSource gloveUse;
 
-    public float initCooldown = 3;
+    public float initCooldown = 3f;
     private float cooldown;
 
     void Update()
@@ -22,6 +25,8 @@ public class GloveMech : MonoBehaviour
         {
             cooldown -= Time.deltaTime;
         }
+
+        
     }
 
     void UseGlove()
@@ -62,6 +67,9 @@ public class GloveMech : MonoBehaviour
                 }
             }
 
+            gloveUse.Play();
+            gloveAnim.SetTrigger("UseGlove");
+            electricity.Play();
             cooldown = initCooldown;
         }
     }

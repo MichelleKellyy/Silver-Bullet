@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1012219602192800943}
   - component: {fileID: 5880442424208743614}
   - component: {fileID: 8536723763643676044}
+  - component: {fileID: 3150632564285311292}
   m_Layer: 9
   m_Name: SkeletonArcherArmour
   m_TagString: Bullet
@@ -98,6 +99,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObjectShrinkOverTime
   shrinkSpeed: 1
+  dontShrink: 0
+--- !u!114 &3150632564285311292
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 899232923507630992}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a247e47cb423f2d4a945e9d5fe14d94d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpriteFacePlayer
 --- !u!1 &1779504947421593942
 GameObject:
   m_ObjectHideFlags: 0
