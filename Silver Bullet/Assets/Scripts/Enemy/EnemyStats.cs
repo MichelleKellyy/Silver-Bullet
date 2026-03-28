@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyStats : MonoBehaviour
 {
@@ -40,8 +41,22 @@ public class EnemyStats : MonoBehaviour
         else
         {
             if (audioSource != null && unarmouredHitClip != null)
-                audioSource.PlayOneShot(unarmouredHitClip);
-            Destroy(gameObject);
+                StartCoroutine(playSoundOnDeath());
         }
+    }
+
+    private IEnumerator playSoundOnDeath()
+    {
+        audioSource.PlayOneShot(unarmouredHitClip);
+
+        GetComponentInChildren<MeshRenderer>().enabled = false;
+        GetComponent<Collider>().enabled = false;
+        GetComponent<EnemyNavAI>().enabled = false;
+
+        while (audioSource.isPlaying)
+        {
+            yield return null;
+        }
+        Destroy(gameObject);
     }
 }

@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class GunMech : MonoBehaviour
 {
+    public CameraRotation cameraRotation;
     public Transform cam;
     public Transform recallPoint;
     public GameObject bulletPrefab;
@@ -11,9 +12,14 @@ public class GunMech : MonoBehaviour
     public AudioSource shoot;
     public AudioSource reload;
 
-    public Animator reloadAnim;
+    public Animator gunAnim;
+
+    public ParticleSystem muzzleFlash;
+    public GameObject hitEffect;
+
     private float initReloadCooldown = 2.4f;
     private float reloadCooldown;
+    public float recoilAmount = 3;
 
     private Bullet currentBullet;
 
@@ -43,10 +49,15 @@ public class GunMech : MonoBehaviour
             Vector3 towardsPlayer = (hit.point - cam.position).normalized * 0.5f;
             GameObject bulletObj = Instantiate(bulletPrefab, new Vector3(hit.point.x, hit.point.y > 3 ? hit.point.y : 3, hit.point.z) - towardsPlayer, Quaternion.identity);
 
+            Instantiate(hitEffect, hit.point, Quaternion.LookRotation(hit.normal));
+
             currentBullet = bulletObj.GetComponent<Bullet>();
             currentBullet.Init(this, recallPoint);
 
+            muzzleFlash.Play();
             shoot.Play();
+            gunAnim.SetTrigger("Recoil");
+            cameraRotation.xRot -= recoilAmount;
         }
     }
 
@@ -54,7 +65,7 @@ public class GunMech : MonoBehaviour
     {
         if (currentBullet == bullet)
         {
-            reloadAnim.SetTrigger("Reload");
+            gunAnim.SetTrigger("Reload");
             reload.Play();
             reloadCooldown = initReloadCooldown;
             currentBullet = null;

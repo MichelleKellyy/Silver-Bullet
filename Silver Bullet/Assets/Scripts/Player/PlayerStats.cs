@@ -17,7 +17,6 @@ public class PlayerStats : MonoBehaviour
     public void attack(int damage)
     {
         damageSound.Play();
-        Debug.Log("player hurt sound");
 
         playerHealth -= damage;
         damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);

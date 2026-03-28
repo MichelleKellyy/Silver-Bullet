@@ -3,12 +3,26 @@ using UnityEngine;
 public class ObjectShrinkOverTime : MonoBehaviour
 {
     public float shrinkSpeed = 1f;
+    public bool dontShrink = false;
+
+    private float timer = 0;
     private void Update()
     {
-        transform.localScale -= Vector3.one * shrinkSpeed * Time.deltaTime;
-        if (transform.localScale.magnitude < new Vector3(0.1f, 0.1f, 0.1f).magnitude)
+        if (dontShrink)
         {
-            Destroy(gameObject);
+            timer += Time.deltaTime;
+            if (timer > 5)
+            {
+                Destroy(gameObject);
+            }
+        }
+        else
+        {
+            transform.localScale -= Vector3.one * shrinkSpeed * Time.deltaTime;
+            if (transform.localScale.magnitude < new Vector3(0.1f, 0.1f, 0.1f).magnitude)
+            {
+                Destroy(gameObject);
+            }
         }
     }
 }

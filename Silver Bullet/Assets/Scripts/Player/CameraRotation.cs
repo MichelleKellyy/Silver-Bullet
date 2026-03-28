@@ -10,7 +10,7 @@ public class CameraRotation : MonoBehaviour
     [SerializeField] float mouseSensitivity = 100f;
 
     [HideInInspector] public float xRot;
-    [HideInInspector] public float yRot = -90;
+    [HideInInspector] public float yRot = 90f;
 
     private float multiplier = 0.01f;
 

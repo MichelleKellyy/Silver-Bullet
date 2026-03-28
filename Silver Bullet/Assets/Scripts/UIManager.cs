@@ -3,6 +3,8 @@ using UnityEngine.SceneManagement;
 
 public class UIManager : MonoBehaviour
 {
+    public AudioSource pauseSound;
+
     [Header("UI Panels")]
     public GameObject startPanel;
     public GameObject hud;
@@ -56,7 +58,10 @@ public class UIManager : MonoBehaviour
             if (isPaused)
                 ResumeGame();
             else
+            {
                 PauseGame();
+                pauseSound.Play();
+            }
         }
     }
 
