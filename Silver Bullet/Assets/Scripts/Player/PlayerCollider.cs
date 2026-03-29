@@ -11,6 +11,11 @@ public class PlayerCollider : MonoBehaviour
         {
             StartCoroutine("Teleport");
         }
+        if (collision.CompareTag("Key"))
+        {
+            GetComponentInParent<PlayerStats>().addKey();
+            Destroy(collision.gameObject);
+        }
     }
 
     IEnumerator Teleport()
