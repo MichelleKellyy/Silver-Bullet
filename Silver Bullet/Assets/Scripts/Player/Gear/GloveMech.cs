@@ -1,7 +1,9 @@
 using UnityEngine;
+using TMPro;
 
 public class GloveMech : MonoBehaviour
 {
+    public TextMeshProUGUI rechargeUI; 
     public GameObject skeletonArmour;
     public GameObject skeletonArcherArmour;
     public Transform cam;
@@ -11,8 +13,8 @@ public class GloveMech : MonoBehaviour
     public ParticleSystem electricity;
     public AudioSource gloveUse;
 
-    public float initCooldown = 3f;
-    private float cooldown;
+    public int rechargeRate = 3;
+    private float charge;
 
     void Update()
     {
@@ -21,9 +23,10 @@ public class GloveMech : MonoBehaviour
             UseGlove();
         }
 
-        if (cooldown > 0)
+        if (charge < 100)
         {
-            cooldown -= Time.deltaTime;
+            charge += Time.deltaTime * rechargeRate;
+            rechargeUI.text = ((int)charge).ToString() + "%";
         }
 
         
@@ -32,7 +35,7 @@ public class GloveMech : MonoBehaviour
     void UseGlove()
     {
         RaycastHit hit;
-        if (Physics.Raycast(cam.position, cam.forward, out hit, Mathf.Infinity, hitMask) && cooldown <= 0)
+        if (Physics.Raycast(cam.position, cam.forward, out hit, Mathf.Infinity, hitMask) && charge >= 100)
         {
             if (hit.collider.CompareTag("Bullet"))
             {
@@ -70,7 +73,7 @@ public class GloveMech : MonoBehaviour
             gloveUse.Play();
             gloveAnim.SetTrigger("UseGlove");
             electricity.Play();
-            cooldown = initCooldown;
+            charge = 0;
         }
     }
 }

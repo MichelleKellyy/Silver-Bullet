@@ -9,6 +9,7 @@ TagManager:
   - NonWall
   - Wall
   - Teleporter
+  - Key
   layers:
   - Default
   - TransparentFX
