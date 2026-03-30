@@ -3,16 +3,3 @@ Procedurally generated dungeon game: one bullet + one magnetic glove. Recall you
 
 ## Project Overview
 This repository contains the development work for an **in-progress** game created as part of **CISC 226: Game Design at Queen’s University**.
-
-## Repository Structure
-```text
-SILVER-BULLET/                          # repo root
-├── Silver Bullet
-    ├── Assets
-    ├── Packages
-    ├── ProjectSettings
-    ├── .gitignore
-    └── .vsconfig
-├── LICENSE
-└── README.md
-```
