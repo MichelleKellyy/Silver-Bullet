@@ -140,6 +140,7 @@ MonoBehaviour:
   audioSource: {fileID: -8009853622631178343}
   armourHitClip: {fileID: 8300000, guid: c20bc271cd2e9784d8327590c548421e, type: 3}
   unarmouredHitClip: {fileID: 8300000, guid: 6073f11804f0243488051d499a5f11f1, type: 3}
+  xpOrbPrefab: {fileID: 4488517607870784505, guid: 7276f5bdee556a1438393bba4930f86a, type: 3}
 --- !u!82 &-8009853622631178343
 AudioSource:
   m_ObjectHideFlags: 0
