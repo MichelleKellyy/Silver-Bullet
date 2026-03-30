@@ -34,18 +34,6 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-    public void RestoreHealthOnLevelUp()
-    {
-        // Fully heal the player
-        playerHealth = initHealth; 
-        
-        // Update the UI
-        healthUI.text = "100%";
-        damageIndicator.color = new Color(1, 1, 1, 0); 
-        
-        Debug.Log("Health restored from Level Up!");
-    }
-
     public void addKey()
     {
         numKeys += 1;
@@ -60,6 +48,21 @@ public class PlayerStats : MonoBehaviour
         else if (!key3.activeSelf)
         {
             key3.SetActive(true);
+        }
+    }
+
+public void RestoreHealth()
+    {
+        playerHealth = initHealth;
+
+        if (damageIndicator != null)
+        {
+            damageIndicator.color = new Color(1, 1, 1, 0f); 
+        }
+
+        if (healthUI != null)
+        {
+            healthUI.text = "100%";
         }
     }
 }

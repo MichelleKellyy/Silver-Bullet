@@ -76,4 +76,9 @@ public class GloveMech : MonoBehaviour
             charge = 0;
         }
     }
+
+    public void UpgradeRechargeRate()
+    {
+        rechargeRate += 1;
+    }
 }

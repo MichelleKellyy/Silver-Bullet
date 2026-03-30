@@ -17,7 +17,6 @@ public class PlayerXPManager : MonoBehaviour
     public void AddXP(int amount)
     {
         currentXP += amount;
-        Debug.Log("Gained " + amount + " XP! Total: " + currentXP + "/" + xpToNextLevel);
 
         if (currentXP >= xpToNextLevel)
         {
@@ -25,17 +24,12 @@ public class PlayerXPManager : MonoBehaviour
         }
     }
 
-    private void LevelUp()
+private void LevelUp()
     {
         currentXP -= xpToNextLevel; 
         currentLevel++;
-        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 2); 
+        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f); 
 
-        if (stats != null)
-        {
-            stats.RestoreHealthOnLevelUp();
-        }
-
-        // TODO: Trigger the UIManager to show the Skill Selection screen
+        FindObjectOfType<UIManager>().ShowLevelUpScreen();
     }
 }
