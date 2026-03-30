@@ -2700,6 +2700,15 @@ MonoBehaviour:
   pausePanel: {fileID: 517846106}
   gameOverPanel: {fileID: 1094807013}
   levelUpPanel: {fileID: 281296547}
+  availableSkills:
+  - skillName: Restore Health
+    skillID: 0
+  - skillName: Faster Recharge
+    skillID: 1
+  - skillName: Faster Speed
+    skillID: 2
+  - skillName: Increase Max Health
+    skillID: 3
   skillBtn1: {fileID: 1117457826}
   skillBtn2: {fileID: 1510545317}
   cameraRotation: {fileID: 1999930178}

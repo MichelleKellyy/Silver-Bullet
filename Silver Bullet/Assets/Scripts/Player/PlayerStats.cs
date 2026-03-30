@@ -51,7 +51,7 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
-public void RestoreHealth()
+    public void RestoreHealth()
     {
         playerHealth = initHealth;
 
@@ -64,5 +64,14 @@ public void RestoreHealth()
         {
             healthUI.text = "100%";
         }
+    }
+
+    public void IncreaseMaxHealth()
+    {
+        initHealth += 20;
+        playerHealth += 20;
+        
+        healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
+        damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
     }
 }

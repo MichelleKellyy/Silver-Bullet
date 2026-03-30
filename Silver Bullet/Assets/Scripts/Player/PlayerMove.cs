@@ -203,4 +203,10 @@ public class PlayerMove : MonoBehaviour
             isDash = false;
         }
     }
+
+    public void IncreaseSpeed()
+    {
+        walkSpeed += 2;
+        runSpeed += 2;
+    }
 }
