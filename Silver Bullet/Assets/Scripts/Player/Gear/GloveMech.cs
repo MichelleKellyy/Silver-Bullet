@@ -28,8 +28,6 @@ public class GloveMech : MonoBehaviour
             charge += Time.deltaTime * rechargeRate;
             rechargeUI.text = ((int)charge).ToString() + "%";
         }
-
-        
     }
 
     void UseGlove()
