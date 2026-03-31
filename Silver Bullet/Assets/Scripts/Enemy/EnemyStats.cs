@@ -14,6 +14,8 @@ public class EnemyStats : MonoBehaviour
     [SerializeField] private AudioClip armourHitClip;
     [SerializeField] private AudioClip unarmouredHitClip;
 
+    [SerializeField] private GameObject xpOrbPrefab;
+
     private bool isArmoured = true;
 
     public bool getArmoured()
@@ -57,6 +59,7 @@ public class EnemyStats : MonoBehaviour
         {
             yield return null;
         }
+        Instantiate(xpOrbPrefab, transform.position, Quaternion.identity);
         Destroy(gameObject);
     }
 }

@@ -50,4 +50,28 @@ public class PlayerStats : MonoBehaviour
             key3.SetActive(true);
         }
     }
+
+    public void RestoreHealth()
+    {
+        playerHealth = initHealth;
+
+        if (damageIndicator != null)
+        {
+            damageIndicator.color = new Color(1, 1, 1, 0f); 
+        }
+
+        if (healthUI != null)
+        {
+            healthUI.text = "100%";
+        }
+    }
+
+    public void IncreaseMaxHealth()
+    {
+        initHealth += 20;
+        playerHealth += 20;
+        
+        healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
+        damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
+    }
 }
