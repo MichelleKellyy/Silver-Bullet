@@ -1154,7 +1154,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &281296548
 RectTransform:
   m_ObjectHideFlags: 0
@@ -3293,7 +3293,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24d4b2fd74d9ce54eb1fe64f0eb6e12e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CreateDungeon
-  dungeonSize: 31
+  dungeonSize: 15
   decayIncrements:
   - upperIndex: 5
     lowerIndex: 5
@@ -3321,7 +3321,7 @@ MonoBehaviour:
   - {fileID: 4542750102710746268, guid: cb6014cce9ee21044b9f01bf003e247b, type: 3}
   - {fileID: 1004710737598685077, guid: 15bef67575db74d41a5b55e5f2950510, type: 3}
   roomSize: 20
-  tieredMatValues: 000000000c00000014000000
+  tieredMatValues: 00000000080000000f000000
   tieredMaterials:
   - nonWall: {fileID: 2100000, guid: 4833fbaec8c050a46896b43203d349c4, type: 2}
     wall: {fileID: 2100000, guid: 17220f4e42d38a6458d5fb72055af033, type: 2}
@@ -7507,8 +7507,8 @@ MonoBehaviour:
   isConnector: 0
   isDeadEnd: 0
   isStartingRoom: 1
-  x: 15
-  z: 15
+  x: 7
+  z: 7
   distanceFromCenter: 0
 --- !u!198 &5818420913145906568
 ParticleSystem:

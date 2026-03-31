@@ -45,6 +45,10 @@ public class GunMech : MonoBehaviour
             {
                 hit.collider.GetComponent<EnemyStats>().hit();
             }
+            else if (hit.collider.CompareTag("Boss"))
+            {
+                hit.collider.GetComponent<BossStats>().TakeHit();
+            }
 
             Vector3 towardsPlayer = (hit.point - cam.position).normalized * 0.5f;
             GameObject bulletObj = Instantiate(bulletPrefab, new Vector3(hit.point.x, hit.point.y > 3 ? hit.point.y : 3, hit.point.z) - towardsPlayer, Quaternion.identity);

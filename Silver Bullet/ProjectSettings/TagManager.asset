@@ -10,6 +10,7 @@ TagManager:
   - Wall
   - Teleporter
   - Key
+  - Boss
   layers:
   - Default
   - TransparentFX
