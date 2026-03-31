@@ -55,6 +55,8 @@ public class BossAI : MonoBehaviour
     private float shootTimer;
     private float chargeTimer;
     private float swingTimer;
+    private float swingStateTimerInitial = 1f;
+    private float swingStateTimer;
 
     private float currentChargeMoveTimer;
     private Vector3 lockedChargeDirection;
@@ -104,6 +106,9 @@ public class BossAI : MonoBehaviour
 
             case BossState.Swinging:
                 StopXZ();
+                swingStateTimer -= dt;
+                if (swingStateTimer <= 0f)
+                    EndSwing();
                 return;
         }
 
@@ -158,6 +163,17 @@ public class BossAI : MonoBehaviour
 
     void BeginCharge()
     {
+        if (!GetComponent<BossStats>().getActivated())
+        {
+            currentState = BossState.Normal;
+
+            if (bossSword != null)
+                bossSword.SetCanDamage(false);
+            if (animator != null)
+                animator.SetBool(chargeHoldBool, false);
+
+            return;
+        }
         if (player == null) return;
 
         playDashSound();
@@ -212,6 +228,7 @@ public class BossAI : MonoBehaviour
     void StartSwing()
     {
         currentState = BossState.Swinging;
+        swingStateTimer = swingStateTimerInitial;
         StopXZ();
         ResetSwingTimer();
 

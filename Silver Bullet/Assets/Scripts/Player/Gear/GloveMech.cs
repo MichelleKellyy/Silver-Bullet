@@ -67,7 +67,25 @@ public class GloveMech : MonoBehaviour
                     }
                 }
             }
-
+            else if (hit.collider.CompareTag("Boss"))
+            {
+                BossStats stats = hit.collider.GetComponent<BossStats>();
+                if (stats.getActivated())
+                {
+                    stats.deactivate();
+                }
+                else
+                {
+                    if (Physics.Raycast(cam.position, cam.forward, out hit, Mathf.Infinity, hitMaskSpecific))
+                    {
+                        if (hit.collider.CompareTag("Bullet"))
+                        {
+                            hit.collider.GetComponent<Bullet>().StartRecall();
+                        }
+                    }
+                }
+            }   
+            
             gloveUse.Play();
             gloveAnim.SetTrigger("UseGlove");
             electricity.Play();
