@@ -7,6 +7,7 @@ public class PlayerStats : MonoBehaviour
     [SerializeField] private int playerHealth = 5;
     [SerializeField] private Image damageIndicator;
     [SerializeField] private TextMeshProUGUI healthUI;
+    [SerializeField] private Image healthBar_FL;
 
     public AudioSource damageSound;
 
@@ -28,6 +29,7 @@ public class PlayerStats : MonoBehaviour
         playerHealth -= damage;
         damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
         healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
+        healthBar_FL.fillAmount = (Mathf.Round(playerHealth / (float)initHealth * 100)) / 100f;
         if (playerHealth <= 0)
         {
             FindObjectOfType<UIManager>().ShowGameOver();

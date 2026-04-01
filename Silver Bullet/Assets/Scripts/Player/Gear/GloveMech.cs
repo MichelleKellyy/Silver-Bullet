@@ -1,8 +1,10 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class GloveMech : MonoBehaviour
 {
+    public Image chargeBar_FL;
     public TextMeshProUGUI rechargeUI; 
     public GameObject skeletonArmour;
     public GameObject skeletonArcherArmour;
@@ -27,6 +29,8 @@ public class GloveMech : MonoBehaviour
         {
             charge += Time.deltaTime * rechargeRate;
             rechargeUI.text = ((int)charge).ToString() + "%";
+            chargeBar_FL.fillAmount = charge / 100f;
+
         }
     }
 
