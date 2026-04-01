@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using UnityEngine.UI; // Needed for Buttons and Images
-using TMPro; // Needed for TextMeshPro
+using UnityEngine.UI;
+using TMPro;
 
 [System.Serializable]
 public class SkillOption
@@ -43,11 +43,13 @@ public class UIManager : MonoBehaviour
     private static bool restartIntoGame = false;
     private PlayerStats playerStats;
     private GloveMech gloveMech;
+    private PlayerMove PlayerMove;
 
     private void Start()
     {
         playerStats = FindObjectOfType<PlayerStats>();
         gloveMech = FindObjectOfType<GloveMech>();
+        PlayerMove = FindObjectOfType<PlayerMove>();
 
         if (restartIntoGame)
         {
@@ -172,7 +174,7 @@ public class UIManager : MonoBehaviour
         if (gunMech != null) gunMech.enabled = false;
     }
 
-public void ShowLevelUpScreen()
+    public void ShowLevelUpScreen()
     {
         isLevelingUp = true;
 
@@ -188,6 +190,11 @@ public void ShowLevelUpScreen()
         if (gunMech != null) gunMech.enabled = false;
 
         List<SkillOption> tempPool = new List<SkillOption>(availableSkills);
+
+        if (playerStats != null && !playerStats.IsMissingHealth())
+        {
+            tempPool.RemoveAll(skill => skill.skillID == 0);
+        }
 
         int randomIdx1 = Random.Range(0, tempPool.Count);
         SkillOption choice1 = tempPool[randomIdx1];
@@ -217,7 +224,7 @@ public void ShowLevelUpScreen()
         }
         else if (upgradeID == 2)
         {
-            if (playerMovement != null) playerMovement.SendMessage("IncreaseSpeed", SendMessageOptions.DontRequireReceiver);
+            if (PlayerMove != null) PlayerMove.IncreaseSpeed();
         }
         else if (upgradeID == 3)
         {

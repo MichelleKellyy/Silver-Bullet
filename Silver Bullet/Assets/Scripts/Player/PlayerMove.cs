@@ -206,7 +206,7 @@ public class PlayerMove : MonoBehaviour
 
     public void IncreaseSpeed()
     {
-        walkSpeed += 2;
-        runSpeed += 2;
+        walkSpeed *= 1.3f;
+        runSpeed *= 1.3f;
     }
 }

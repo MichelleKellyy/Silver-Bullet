@@ -15,7 +15,7 @@ public class GloveMech : MonoBehaviour
     public ParticleSystem electricity;
     public AudioSource gloveUse;
 
-    public int rechargeRate = 3;
+    public float rechargeRate = 3;
     private float charge;
 
     void Update()
@@ -99,6 +99,6 @@ public class GloveMech : MonoBehaviour
 
     public void UpgradeRechargeRate()
     {
-        rechargeRate *= 2;
+        rechargeRate *= 1.3f;
     }
 }

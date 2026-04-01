@@ -35,8 +35,8 @@ private void LevelUp()
     {
         currentXP -= xpToNextLevel; 
         currentLevel++;
-        xpToNextLevel = Mathf.RoundToInt(xpToNextLevel * 1.5f); 
-
+        xpToNextLevel += 10;
+        XPBar_FL.fillAmount = (float)currentXP / xpToNextLevel;
         FindObjectOfType<UIManager>().ShowLevelUpScreen();
     }
 }

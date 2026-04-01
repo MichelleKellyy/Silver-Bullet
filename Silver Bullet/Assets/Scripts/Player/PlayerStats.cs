@@ -25,11 +25,11 @@ public class PlayerStats : MonoBehaviour
     public void attack(int damage)
     {
         damageSound.Play();
-
         playerHealth -= damage;
         damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
         healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
         healthBar_FL.fillAmount = (Mathf.Round(playerHealth / (float)initHealth * 100)) / 100f;
+        Debug.Log("Max health: " + initHealth + " Current health: " + playerHealth);
         if (playerHealth <= 0)
         {
             FindObjectOfType<UIManager>().ShowGameOver();
@@ -68,10 +68,21 @@ public class PlayerStats : MonoBehaviour
 
     public void IncreaseMaxHealth()
     {
-        initHealth += 20;
-        playerHealth += 20;
-        
+        playerHealth += 1;
+        initHealth += 1;
+
+        if (damageIndicator != null)
+        {
+            damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f); 
+        }
+
         healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
-        damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f);
+        healthBar_FL.fillAmount = (Mathf.Round(playerHealth / (float)initHealth * 100)) / 100f;
+        Debug.Log("Max health: " + initHealth + " Current health: " + playerHealth);
+    }
+
+    public bool IsMissingHealth()
+    {
+        return playerHealth < initHealth; 
     }
 }
