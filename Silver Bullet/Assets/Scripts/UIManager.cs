@@ -187,17 +187,11 @@ public void ShowLevelUpScreen()
         if (playerMovement != null) playerMovement.enabled = false;
         if (gunMech != null) gunMech.enabled = false;
 
-        if (availableSkills == null || availableSkills.Count < 2)
-        {
-            Debug.LogError("Not enough skills in the pool! Add them in the Inspector on the UIManager.");
-            return;
-        }
-
         List<SkillOption> tempPool = new List<SkillOption>(availableSkills);
 
         int randomIdx1 = Random.Range(0, tempPool.Count);
         SkillOption choice1 = tempPool[randomIdx1];
-        tempPool.RemoveAt(randomIdx1); // Removes it so button 2 can't pick the same one!
+        tempPool.RemoveAt(randomIdx1);
 
         int randomIdx2 = Random.Range(0, tempPool.Count);
         SkillOption choice2 = tempPool[randomIdx2];

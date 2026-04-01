@@ -99,6 +99,6 @@ public class GloveMech : MonoBehaviour
 
     public void UpgradeRechargeRate()
     {
-        rechargeRate += 1;
+        rechargeRate *= 2;
     }
 }

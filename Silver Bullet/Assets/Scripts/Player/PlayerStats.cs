@@ -59,13 +59,11 @@ public class PlayerStats : MonoBehaviour
 
         if (damageIndicator != null)
         {
-            damageIndicator.color = new Color(1, 1, 1, 0f); 
+            damageIndicator.color = new Color(1, 1, 1, (10 - playerHealth * 10 / initHealth) / 255f); 
         }
 
-        if (healthUI != null)
-        {
-            healthUI.text = "100%";
-        }
+        healthUI.text = (Mathf.Round(playerHealth / (float)initHealth * 100)).ToString() + "%";
+        healthBar_FL.fillAmount = (Mathf.Round(playerHealth / (float)initHealth * 100)) / 100f;
     }
 
     public void IncreaseMaxHealth()
