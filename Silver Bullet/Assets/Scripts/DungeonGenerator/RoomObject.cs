@@ -2,11 +2,12 @@ using UnityEngine;
 
 public class RoomObject : MonoBehaviour
 {
-    [Header("North (+X), East (+Z), South, West")]
+    [Header("North (+Z), East (+X), South, West")]
     public bool[] directions = { false, false, false, false }; // { North, East, South, West }
     public bool isConnector; // Is a hallway between rooms
     public bool isDeadEnd;
     [SerializeField] private bool isStartingRoom;
+    [HideInInspector] public bool isEndingRoom;
 
     // Map positions
     [HideInInspector] public int x;

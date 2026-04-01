@@ -726,6 +726,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   directions: 00010100
   isConnector: 0
+  isDeadEnd: 0
   isStartingRoom: 0
   x: 0
   z: 0

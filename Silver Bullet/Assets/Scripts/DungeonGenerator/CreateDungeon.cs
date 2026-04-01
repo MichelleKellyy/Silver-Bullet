@@ -186,6 +186,7 @@ public class CreateDungeon : MonoBehaviour
         }
 
         placeKeys();
+        OnDungeonGenerated.Invoke();
     }
 
 
@@ -280,6 +281,7 @@ public class CreateDungeon : MonoBehaviour
             {
                 newRoom = Instantiate(chosenRoom, new Vector3(curRoom.transform.position.x + xChange * roomSize, 0, curRoom.transform.position.z + zChange * roomSize), Quaternion.identity, roomParent.transform);
                 newRoomData = newRoom.GetComponent<RoomObject>();
+                newRoomData.isEndingRoom = (chosenRoom == endingRoom);
                 newRoomData.x = xNew;
                 newRoomData.z = zNew;
 
@@ -420,4 +422,23 @@ public class CreateDungeon : MonoBehaviour
 
         return bestRoom;
     }
+
+    public int getDungeonSize()
+    {
+        return dungeonSize;
+    }
+    public int getRoomSize()
+    {
+        return roomSize;
+    }
+    public IReadOnlyList<RoomObject> getPlacedRooms()
+    {
+        return placedRooms;
+    }
+    public RoomObject getStartingRoom()
+    {
+        return dungeonStartingPoint.GetComponent<RoomObject>();
+    }
+
+    public event System.Action OnDungeonGenerated;
 }
