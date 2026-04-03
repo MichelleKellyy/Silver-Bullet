@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Collections;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using TMPro;
@@ -14,20 +15,25 @@ public class SkillOption
 public class UIManager : MonoBehaviour
 {
     public AudioSource pauseSound;
+    public AudioSource bossMusic;
+    public AudioSource normalMusic;
 
     [Header("UI Panels")]
+    public Animator blackScreen;
     public GameObject startPanel;
     public GameObject hud;
     public GameObject pausePanel;
+    public GameObject controlPanel;
     public GameObject gameOverPanel;
     public GameObject levelUpPanel;
+    public GameObject finalButtons;
+    public TextMeshProUGUI dialogue;
 
     [Header("Skill Pool")]
     public List<SkillOption> availableSkills;
 
     [Header("Level Up Buttons & Icons")]
     public Button skillBtn1;
-
     public Button skillBtn2;
 
     [Header("Player Control")]
@@ -51,12 +57,13 @@ public class UIManager : MonoBehaviour
         gloveMech = FindObjectOfType<GloveMech>();
         PlayerMove = FindObjectOfType<PlayerMove>();
 
-        if (restartIntoGame)
+        // This doesn't function with the new intro, not sure if we want to make it work or not
+        /*if (restartIntoGame)
         {
             restartIntoGame = false;
             StartGame();
             return;
-        }
+        }*/
 
         startPanel.SetActive(true);
         hud.SetActive(false);
@@ -90,18 +97,44 @@ public class UIManager : MonoBehaviour
 
     public void StartGame()
     {
+        StartCoroutine(startGame());
+    }
+
+    private IEnumerator startGame()
+    {
+        startPanel.SetActive(false);
+        Time.timeScale = 1f;
+
+        blackScreen.gameObject.SetActive(true);
+        dialogue.gameObject.SetActive(true);
+
+        yield return new WaitForSeconds(2f);
+
+        dialogue.GetComponent<Animator>().SetTrigger("FadeIn");
+        dialogue.text = "You wake up in a dark dungeon, unable to remember who you are.\n\nAround you are scattered items.\n\nAmong them you find a map, a glowing glove, a pistol, and a single bullet.\n\n\nPress 'Left Click' to continue.";
+
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+
+        dialogue.GetComponent<Animator>().SetTrigger("FadeOut");
+        yield return new WaitForSeconds(1f);
+        dialogue.text = "Controls\n\n'Left Click' : Shoot\n'Right Click' : Use glove on metal objects\n'Left Shift' : Run\n'Space' + 'A' or 'D' : Dash\n'M' : Open map\n'Escape' : Pause\n\nPress 'Left Click' to continue.";
+        dialogue.GetComponent<Animator>().SetTrigger("FadeIn");
+
+        yield return new WaitForSeconds(1f);
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+
+        dialogue.GetComponent<Animator>().SetTrigger("FadeOut");
+        blackScreen.SetTrigger("FadeOut");
+
         gameStarted = true;
         gameOver = false;
         isPaused = false;
         isLevelingUp = false;
 
-        startPanel.SetActive(false);
         hud.SetActive(true);
         pausePanel.SetActive(false);
         gameOverPanel.SetActive(false);
         if (levelUpPanel != null) levelUpPanel.SetActive(false);
-
-        Time.timeScale = 1f;
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -109,6 +142,57 @@ public class UIManager : MonoBehaviour
         if (cameraRotation != null) cameraRotation.enabled = true;
         if (playerMovement != null) playerMovement.enabled = true;
         if (gunMech != null) gunMech.enabled = true;
+    }
+
+    public void playEndingSequence()
+    {
+        StartCoroutine(fadeOutInMusic());
+        StartCoroutine(winGame());
+    }
+
+    private IEnumerator fadeOutInMusic()
+    {
+        while (bossMusic.volume > 0)
+        {
+            bossMusic.volume -= 0.01f;
+            yield return new WaitForSeconds(0.05f);
+        }
+        bossMusic.Stop();
+        normalMusic.Play();
+        while (normalMusic.volume < 0.25f)
+        {
+            normalMusic.volume += 0.01f;
+            yield return new WaitForSeconds(0.05f);
+        }
+    }
+
+    private IEnumerator winGame()
+    {
+        yield return new WaitForSeconds(3f);
+
+        gameOver = true;
+        hud.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        if (cameraRotation != null) cameraRotation.enabled = false;
+        if (playerMovement != null) playerMovement.enabled = false;
+        if (gunMech != null) gunMech.enabled = false;
+
+        blackScreen.SetTrigger("FadeIn");
+        yield return new WaitForSeconds(1f);
+        dialogue.GetComponent<Animator>().SetTrigger("FadeIn");
+        dialogue.text = "The dungeon falls silent as the final monster stops moving.\n\n\nPress 'Left Click' to continue.";
+
+        yield return new WaitUntil(() => Input.GetMouseButton(0));
+
+        dialogue.GetComponent<Animator>().SetTrigger("FadeOut");
+        yield return new WaitForSeconds(1f);
+        dialogue.text = "There is nowhere else for you to go.\n\nWhat comes next is up to you.";
+        dialogue.GetComponent<Animator>().SetTrigger("FadeIn");
+
+        finalButtons.SetActive(true);
     }
 
     public void PauseGame()
@@ -129,6 +213,18 @@ public class UIManager : MonoBehaviour
         if (cameraRotation != null) cameraRotation.enabled = false;
         if (playerMovement != null) playerMovement.enabled = false;
         if (gunMech != null) gunMech.enabled = false;
+    }
+
+    public void ShowControls()
+    {
+        controlPanel.SetActive(true);
+        pausePanel.SetActive(false);
+    }
+
+    public void HideControls()
+    {
+        controlPanel.SetActive(false);
+        pausePanel.SetActive(true);
     }
 
     public void ResumeGame()

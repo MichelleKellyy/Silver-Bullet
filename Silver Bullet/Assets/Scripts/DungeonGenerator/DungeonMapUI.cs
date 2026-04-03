@@ -20,7 +20,6 @@ public class DungeonMapUI : MonoBehaviour
     [SerializeField] private Color corridorColour = new Color(0.7f, 0.7f, 0.7f, 1f);
     [SerializeField] private Color startRoomColour = new Color(0.6f, 1f, 0.6f, 1f);
     [SerializeField] private Color endRoomColour = new Color(1f, 0.7f, 0.4f, 1f);
-    [SerializeField] private bool revealCorridors = true;
     [SerializeField] private int corridorThickness = 4;
 
     private Texture2D mapTex;
@@ -29,7 +28,6 @@ public class DungeonMapUI : MonoBehaviour
 
     private RoomObject currentRoom;
     private int dungeonSize;
-    private int roomSize;
     private bool initialized;
 
     private void OnEnable()
@@ -67,7 +65,6 @@ public class DungeonMapUI : MonoBehaviour
         RoomObject startRoom = dungeonGenerator.getStartingRoom();
 
         dungeonSize = dungeonGenerator.getDungeonSize();
-        roomSize = dungeonGenerator.getRoomSize();
 
         roomDict.Clear();
         discoveredCells.Clear();

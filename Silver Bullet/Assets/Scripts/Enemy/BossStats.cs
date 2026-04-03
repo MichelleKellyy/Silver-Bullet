@@ -8,6 +8,7 @@ public class BossStats : MonoBehaviour
     [SerializeField] private Transform rotatePoint;
     [SerializeField] private AudioSource bones;
     [SerializeField] private AudioSource metal;
+    [SerializeField] private UIManager uiManager;
 
     private bool activated = true;
 
@@ -42,6 +43,8 @@ public class BossStats : MonoBehaviour
     {
         if (!activated)
         {
+            GetComponent<BossAI>().increaseSpeed();
+            GetComponent<BossAI>().decreaseShootInterval();
             health -= 1;
             bones.Play();
 
@@ -50,6 +53,7 @@ public class BossStats : MonoBehaviour
 
             if (health <= 0)
             {
+                uiManager.playEndingSequence();
                 Destroy(gameObject);
             }
 

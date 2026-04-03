@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class EnemyNavAI : MonoBehaviour
 {
@@ -6,6 +7,7 @@ public class EnemyNavAI : MonoBehaviour
 
     [SerializeField] private bool isArcher;
     [SerializeField] private AudioSource noise;
+    [SerializeField] private AudioSource arrowSound;
 
     [Header("Ranges")]
     [SerializeField] private LayerMask hitMask;
@@ -332,7 +334,7 @@ public class EnemyNavAI : MonoBehaviour
 
         if (shootTimer <= 0f)
         {
-            ShootArrow();
+            StartCoroutine(ShootArrow());
             shootTimer = shootCooldown;
         }
     }
@@ -359,19 +361,18 @@ public class EnemyNavAI : MonoBehaviour
         }
     }
 
-    void ShootArrow()
+    IEnumerator ShootArrow()
     {
         if (arrowPrefab == null || shootPoint == null || player == null)
-            return;
+            yield break;
+
+        arrowSound.Play();
+        yield return new WaitForSeconds(1.1f);
 
         Vector3 aimPoint = player.position + Vector3.up * 1.0f;
         Vector3 dir = (aimPoint - shootPoint.position).normalized;
 
-        GameObject arrowObj = Instantiate(
-            arrowPrefab,
-            shootPoint.position,
-            Quaternion.LookRotation(dir)
-        );
+        GameObject arrowObj = Instantiate(arrowPrefab, shootPoint.position, Quaternion.LookRotation(dir));
 
         Rigidbody arrowRb = arrowObj.GetComponent<Rigidbody>();
         if (arrowRb != null)

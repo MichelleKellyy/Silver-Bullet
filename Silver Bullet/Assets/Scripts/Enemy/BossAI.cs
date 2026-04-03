@@ -326,4 +326,15 @@ public class BossAI : MonoBehaviour
         if (animator != null)
             animator.SetBool(chargeHoldBool, false);
     }
+
+    public void increaseSpeed()
+    {
+        moveSpeed += 0.2f;
+    }
+
+    public void decreaseShootInterval()
+    {
+        minShootInterval -= 0.15f;
+        maxShootInterval -= 0.15f;
+    }
 }

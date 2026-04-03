@@ -65,6 +65,12 @@ public class GunMech : MonoBehaviour
         }
     }
 
+    public void remoteCallBullet()
+    {
+        if (currentBullet != null)
+            currentBullet.StartRecall();
+    }
+
     public void ClearBulletLock(Bullet bullet)
     {
         if (currentBullet == bullet)
