@@ -182,6 +182,7 @@ public class CreateDungeon : MonoBehaviour
 
         if (!endingRoomPlaced)
         {
+            deleteAllRoomsAndReset(inEditMode);
             Debug.LogError("Failed to place ending room. Change settings");
         }
 
@@ -307,7 +308,11 @@ public class CreateDungeon : MonoBehaviour
             {
                 if (newRoomData.distanceFromCenter >= tieredMatValues[tier])
                 {
-                    if (obj.CompareTag("NonWall"))
+                    if (obj.CompareTag("Door"))
+                    {
+                        continue;
+                    }
+                    else if (obj.CompareTag("NonWall"))
                     {
                         obj.material = tieredMaterials[tier].nonWall;
                     }
@@ -351,7 +356,7 @@ public class CreateDungeon : MonoBehaviour
 
         foreach (RoomObject room in placedRooms) // Filter out invalid rooms
         {
-            if (room.isConnector || room.gameObject == endingRoom || room.distanceFromCenter <= 1)
+            if (room.isConnector || room.isEndingRoom || room.distanceFromCenter <= 1)
             {
                 continue;
             }
@@ -361,7 +366,7 @@ public class CreateDungeon : MonoBehaviour
 
         if (possiblePlacements.Count < 3)
         {
-            Debug.LogError("Cannot place keys, need more valid rooms");
+            deleteAllRoomsAndReset(false);
             return;
         }
 

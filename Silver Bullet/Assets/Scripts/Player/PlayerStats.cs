@@ -53,6 +53,14 @@ public class PlayerStats : MonoBehaviour
         }
     }
 
+    public void removeKeys()
+    {
+        key1.SetActive(false);
+        key2.SetActive(false);
+        key3.SetActive(false);
+        numKeys = 0;
+    }
+
     public void RestoreHealth()
     {
         playerHealth = initHealth;
@@ -84,5 +92,10 @@ public class PlayerStats : MonoBehaviour
     public bool IsMissingHealth()
     {
         return playerHealth < initHealth; 
+    }
+
+    public bool HasThreeKeys()
+    {
+        return numKeys == 3;
     }
 }

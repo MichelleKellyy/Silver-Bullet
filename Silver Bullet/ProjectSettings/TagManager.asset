@@ -11,6 +11,7 @@ TagManager:
   - Teleporter
   - Key
   - Boss
+  - Door
   layers:
   - Default
   - TransparentFX
