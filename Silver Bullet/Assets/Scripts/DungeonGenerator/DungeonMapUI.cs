@@ -246,11 +246,23 @@ public class DungeonMapUI : MonoBehaviour
 
         if (!room.isConnector)
         {
+            int outline = Mathf.Clamp(1, 1, pixelsPerCell / 2);
+
             for (int x = 0; x < pixelsPerCell; x++)
             {
                 for (int y = 0; y < pixelsPerCell; y++)
                 {
-                    mapTex.SetPixel(startX + x, startY + y, drawColour);
+                    bool isBorder =
+                        x < outline ||
+                        y < outline ||
+                        x >= pixelsPerCell - outline ||
+                        y >= pixelsPerCell - outline;
+
+                    mapTex.SetPixel(
+                        startX + x,
+                        startY + y,
+                        isBorder ? Color.black : drawColour
+                    );
                 }
             }
 
