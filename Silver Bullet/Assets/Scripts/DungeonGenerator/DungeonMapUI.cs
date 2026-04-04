@@ -327,6 +327,6 @@ public class DungeonMapUI : MonoBehaviour
         playerIcon.anchoredPosition = new Vector2(x, y);
 
         float rot = orientation.eulerAngles.y;
-        playerIcon.localEulerAngles = new Vector3(180f, 0f, rot);
+        playerIcon.localEulerAngles = new Vector3(0f, 180f, rot);
     }
 }

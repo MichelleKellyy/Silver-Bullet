@@ -8207,7 +8207,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 10915, guid: 0000000000000000f000000000000000, type: 0}
+  m_Sprite: {fileID: 21300000, guid: 5434cb9ae01d28f46ac5907191072eb0, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -8565,7 +8565,7 @@ MonoBehaviour:
   mapImage: {fileID: 341622378}
   playerIcon: {fileID: 1799643612}
   mapKey: 109
-  pixelsPerCell: 12
+  pixelsPerCell: 15
   hiddenColour: {r: 0, g: 0, b: 0, a: 0.29411766}
   roomColour: {r: 1, g: 1, b: 1, a: 1}
   corridorColour: {r: 0.7, g: 0.7, b: 0.7, a: 1}
@@ -10432,7 +10432,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: e45e3eb826602a2448f24406a92733a0, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -11049,12 +11049,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12683e3f9909f74880efc06a39e2a49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BossStats
-  health: 10
+  health: 8
   cooldownLength: 5
   rotatePoint: {fileID: 592868847793214903}
   bones: {fileID: 8657942097430864164}
   metal: {fileID: 6451830355506651842}
   uiManager: {fileID: 948279873}
+  deathEffect: {fileID: 8468987581531335492, guid: f82fc172161b0664892d8dee7529b85e, type: 3}
 --- !u!1 &2290065752457955261
 GameObject:
   m_ObjectHideFlags: 0
@@ -13061,7 +13062,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 920c002aff96b7a47b81f7cead4a5c2c, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0
@@ -29116,7 +29117,7 @@ AudioSource:
   m_audioClip: {fileID: 0}
   m_Resource: {fileID: 8300000, guid: 6073f11804f0243488051d499a5f11f1, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 0.5
+  m_Volume: 0.25
   m_Pitch: 1
   Loop: 0
   Mute: 0

@@ -9,6 +9,7 @@ public class BossStats : MonoBehaviour
     [SerializeField] private AudioSource bones;
     [SerializeField] private AudioSource metal;
     [SerializeField] private UIManager uiManager;
+    [SerializeField] private GameObject deathEffect;
 
     private bool activated = true;
 
@@ -23,6 +24,7 @@ public class BossStats : MonoBehaviour
         activated = false;
         GetComponent<Animator>().SetTrigger("Interrupt");
         GetComponent<Animator>().SetBool("Deactivate", true);
+        GetComponent<BossAI>().cancelDash();
         cooldown = cooldownLength;
     }
 
@@ -53,6 +55,7 @@ public class BossStats : MonoBehaviour
 
             if (health <= 0)
             {
+                Instantiate(deathEffect, new Vector3(transform.position.x, 54f, transform.position.z), Quaternion.Euler(270, 180, 0));
                 uiManager.playEndingSequence();
                 Destroy(gameObject);
             }

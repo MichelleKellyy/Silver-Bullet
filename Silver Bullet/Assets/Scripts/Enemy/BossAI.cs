@@ -121,9 +121,11 @@ public class BossAI : MonoBehaviour
         }
 
         // Random dash can happen at any distance
-        if (chargeTimer <= 0f)
+        if (chargeTimer <= 0f && GetComponent<BossStats>().getActivated())
         {
-            StartChargeUp();
+            currentState = BossState.ChargeUp;
+            ResetChargeTimer();
+            Invoke(nameof(StartChargeUp), 0.1f);
             return;
         }
 
@@ -146,7 +148,6 @@ public class BossAI : MonoBehaviour
 
     void StartChargeUp()
     {
-        currentState = BossState.ChargeUp;
         StopXZ();
 
         if (bossSword != null)
@@ -159,22 +160,10 @@ public class BossAI : MonoBehaviour
         }
 
         Invoke(nameof(BeginCharge), chargeUpDuration);
-        ResetChargeTimer();
     }
 
     void BeginCharge()
     {
-        if (!GetComponent<BossStats>().getActivated())
-        {
-            currentState = BossState.Normal;
-
-            if (bossSword != null)
-                bossSword.SetCanDamage(false);
-            if (animator != null)
-                animator.SetBool(chargeHoldBool, false);
-
-            return;
-        }
         if (player == null) return;
 
         playDashSound();
@@ -211,6 +200,19 @@ public class BossAI : MonoBehaviour
         {
             EndCharge();
         }
+    }
+
+    public void cancelDash()
+    {
+        CancelInvoke();
+        currentState = BossState.Normal;
+
+        if (bossSword != null)
+            bossSword.SetCanDamage(false);
+        if (animator != null)
+            animator.SetBool(chargeHoldBool, false);
+
+        return;
     }
 
     void EndCharge()
@@ -253,7 +255,7 @@ public class BossAI : MonoBehaviour
 
     public void SpawnParticle()
     {
-        Instantiate(shockwave, transform.position + transform.forward * 4, Quaternion.identity);
+        Instantiate(shockwave, GetComponentInChildren<BossSword>().gameObject.transform.position, Quaternion.identity);
     }
 
     public void playSwingSound()

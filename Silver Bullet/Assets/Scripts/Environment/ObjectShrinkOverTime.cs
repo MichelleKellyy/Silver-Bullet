@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class ObjectShrinkOverTime : MonoBehaviour
 {
+    public float lifetime = 5f;
     public float shrinkSpeed = 1f;
     public bool dontShrink = false;
 
@@ -11,7 +12,7 @@ public class ObjectShrinkOverTime : MonoBehaviour
         if (dontShrink)
         {
             timer += Time.deltaTime;
-            if (timer > 5)
+            if (timer > lifetime)
             {
                 Destroy(gameObject);
             }
