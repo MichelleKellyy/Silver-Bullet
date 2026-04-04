@@ -168,7 +168,7 @@ public class UIManager : MonoBehaviour
 
     private IEnumerator winGame()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(5f);
 
         gameOver = true;
         hud.SetActive(false);
