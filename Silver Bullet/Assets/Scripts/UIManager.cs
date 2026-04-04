@@ -46,16 +46,16 @@ public class UIManager : MonoBehaviour
     private bool gameOver = false;
     private bool isLevelingUp = false;
 
-    private static bool restartIntoGame = false;
+    // private static bool restartIntoGame = false;
     private PlayerStats playerStats;
     private GloveMech gloveMech;
     private PlayerMove PlayerMove;
 
     private void Start()
     {
-        playerStats = FindObjectOfType<PlayerStats>();
-        gloveMech = FindObjectOfType<GloveMech>();
-        PlayerMove = FindObjectOfType<PlayerMove>();
+        playerStats = FindFirstObjectByType<PlayerStats>();
+        gloveMech = FindFirstObjectByType<GloveMech>();
+        PlayerMove = FindFirstObjectByType<PlayerMove>();
 
         // This doesn't function with the new intro, not sure if we want to make it work or not
         /*if (restartIntoGame)
@@ -332,7 +332,7 @@ public class UIManager : MonoBehaviour
 
     public void RestartGame()
     {
-        restartIntoGame = true;
+        // restartIntoGame = true;
         Time.timeScale = 1f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }

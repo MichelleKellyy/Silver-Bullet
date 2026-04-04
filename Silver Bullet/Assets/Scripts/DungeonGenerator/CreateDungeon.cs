@@ -104,7 +104,7 @@ public class CreateDungeon : MonoBehaviour
     private List<RoomObject> placedRooms = new List<RoomObject>();
     private bool endingRoomPlaced = false;
 
-    private int maxRetries = 50;
+    private int maxRetries = 250;
 
     private enum Directions // North is +1 on the Z, East is +1 on the X
     {
@@ -149,45 +149,51 @@ public class CreateDungeon : MonoBehaviour
 
     private void createDungeon(bool inEditMode)
     {
-        roomParent = new GameObject("Rooms");
-        enemyParent = new GameObject("Enemies");
-        keyParent = new GameObject("Keys");
-
-        map = new bool[dungeonSize, dungeonSize];
-        map[dungeonSize / 2, dungeonSize / 2] = true; // Initial room will always be at the center
-
-        dungeonStartingPoint.GetComponent<RoomObject>().x = dungeonSize / 2;
-        dungeonStartingPoint.GetComponent<RoomObject>().z = dungeonSize / 2;
-        toPlace.Add(dungeonStartingPoint);
-
         int retries = 0;
-        while ((toPlace.Count > 0 || !endingRoomPlaced) && retries < maxRetries) // This will be done for every room that is placed
-        {
-            if (toPlace.Count > 0)
-            {
-                GameObject curRoom = toPlace.Remove();
-                RoomObject curRoomData = curRoom.GetComponent<RoomObject>();
-
-                foreach (var (placingDirection, xChange, zChange) in directionsInfo) // Go through all directions and see if cur room has any of those directions
-                {
-                    attemptPlacementAt(curRoom, curRoomData, placingDirection, xChange, zChange);
-                }
-            }
-            else // We placed all rooms but no ending room was placed, retry
-            {
-                deleteAllRoomsAndReset(inEditMode);
-                retries++;
-            }
-        }
-
-        if (!endingRoomPlaced)
+        while (retries < maxRetries)
         {
             deleteAllRoomsAndReset(inEditMode);
-            Debug.LogError("Failed to place ending room. Change settings");
+
+            while ((toPlace.Count > 0 || !endingRoomPlaced)) // This will be done for every room that is placed
+            {
+                if (toPlace.Count > 0)
+                {
+                    GameObject curRoom = toPlace.Remove();
+                    RoomObject curRoomData = curRoom.GetComponent<RoomObject>();
+
+                    foreach (var (placingDirection, xChange, zChange) in directionsInfo) // Go through all directions and see if cur room has any of those directions
+                    {
+                        attemptPlacementAt(curRoom, curRoomData, placingDirection, xChange, zChange);
+                    }
+                }
+                else // We placed all rooms but no ending room was placed, retry
+                {
+                    break;
+                }
+            }
+
+            if (!endingRoomPlaced)
+            {
+                retries++;
+                continue;
+            }
+            if (!placeKeys()) // Placing keys may fail
+            {
+                retries++;
+                continue;
+            }
+            if (numRoomsPlaced < (dungeonSize * dungeonSize) / 3) // Ensure dungeon isn't tiny
+            {
+                retries++;
+                continue;
+            }
+
+            if (!inEditMode)
+                OnDungeonGenerated.Invoke(); // Draw map
+            return;
         }
 
-        placeKeys();
-        OnDungeonGenerated.Invoke();
+        Debug.LogError("Ran out of retries for dungeon generation.");
     }
 
 
@@ -205,13 +211,24 @@ public class CreateDungeon : MonoBehaviour
             Destroy(enemyParent);
             Destroy(keyParent);
         }
-        placedRooms.Clear();
+
         roomParent = new GameObject("Rooms");
         enemyParent = new GameObject("Enemies");
         keyParent = new GameObject("Keys");
+
+        placedRooms.Clear();
+        numRoomsPlaced = 0;
+        endingRoomPlaced = false;
+
         map = new bool[dungeonSize, dungeonSize];
         map[dungeonSize / 2, dungeonSize / 2] = true;
-        numRoomsPlaced = 0;
+
+        RoomObject startRoom = dungeonStartingPoint.GetComponent<RoomObject>();
+        startRoom.x = dungeonSize / 2;
+        startRoom.z = dungeonSize / 2;
+        startRoom.distanceFromCenter = 0;
+
+        toPlace.Clear();
         toPlace.Add(dungeonStartingPoint);
     }
 
@@ -350,7 +367,7 @@ public class CreateDungeon : MonoBehaviour
         toPlace.Add(newRoom);
     }
 
-    private void placeKeys()
+    private bool placeKeys()
     {
         List<RoomObject> possiblePlacements = new List<RoomObject>();
 
@@ -366,8 +383,7 @@ public class CreateDungeon : MonoBehaviour
 
         if (possiblePlacements.Count < 3)
         {
-            deleteAllRoomsAndReset(false);
-            return;
+            return false;
         }
 
         // Get furthest room distance
@@ -398,6 +414,8 @@ public class CreateDungeon : MonoBehaviour
         Instantiate(key, !thirdKeyLoc.isDeadEnd 
                     ? new Vector3(thirdKeyLoc.transform.position.x, thirdKeyLoc.transform.position.y + 3, thirdKeyLoc.transform.position.z)
                     : new Vector3(thirdKeyLoc.transform.position.x, thirdKeyLoc.transform.position.y + 3, thirdKeyLoc.transform.position.z) + thirdKeyLoc.transform.right.normalized * 5, Quaternion.identity, keyParent.transform);
+
+        return true;
     }
 
     private RoomObject chooseFurthestFrom(List<RoomObject> rooms, List<RoomObject> chosen)

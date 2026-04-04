@@ -6,6 +6,7 @@ public class BossAI : MonoBehaviour
     private Rigidbody rb;
     private Animator animator;
     private float fixedY;
+    public GameObject shockwave;
 
     private enum BossState
     {
@@ -248,6 +249,11 @@ public class BossAI : MonoBehaviour
     {
         if (bossSword != null)
             bossSword.SetCanDamage(true);
+    }
+
+    public void SpawnParticle()
+    {
+        Instantiate(shockwave, transform.position + transform.forward * 4, Quaternion.identity);
     }
 
     public void playSwingSound()

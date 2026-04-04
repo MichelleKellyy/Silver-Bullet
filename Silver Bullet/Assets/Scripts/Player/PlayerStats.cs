@@ -32,7 +32,7 @@ public class PlayerStats : MonoBehaviour
         Debug.Log("Max health: " + initHealth + " Current health: " + playerHealth);
         if (playerHealth <= 0)
         {
-            FindObjectOfType<UIManager>().ShowGameOver();
+            FindFirstObjectByType<UIManager>().ShowGameOver();
         }
     }
 

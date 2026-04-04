@@ -37,6 +37,6 @@ private void LevelUp()
         currentLevel++;
         xpToNextLevel += 10;
         XPBar_FL.fillAmount = (float)currentXP / xpToNextLevel;
-        FindObjectOfType<UIManager>().ShowLevelUpScreen();
+        FindFirstObjectByType<UIManager>().ShowLevelUpScreen();
     }
 }
